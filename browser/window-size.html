@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Window Size</title>
+    <style>
+      .tag {
+        display: inline-block;
+        background-color: thistle;
+        padding: 16px;
+        margin: 16px;
+        font-size: 48px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="tag">Window Size</div>
+
+    <script>
+      // window.screen = 사용자의 모니터의 전체 크기
+      // window.outer = 브라우저의 페이지를 넘어선 전체 크기
+      // window.inner = 브라우저의 페이지가 표시되는 뷰 영역의 전체 크기(스크롤 포함)
+      // documentElement.clientWidth = 브라우저의 페이지가 표시되는 뷰 영역의 전체 크기(스크롤 미포함, 즉 브라우저의 요소를 제외한 문서 자체의 영역 크기)
+
+      const tag = document.querySelector('.tag');
+
+      window.addEventListener('resize', () => {
+        updateTag();
+      });
+
+      updateTag();
+
+      function updateTag() {
+        tag.innerHTML = `
+          window.screen : ${window.screen.width}, ${window.screen.height} <br/>
+          window.outer : ${window.outerWidth}, ${window.outerHeight} <br/>
+          window.inner : ${window.innerWidth}, ${window.innerHeight} <br/>
+          documentElement.clientWidth : ${document.documentElement.clientWidth}, ${document.documentElement.clientHeight} <br/>
+        `;
+      }
+    </script>
+  </body>
+</html>
