@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Window Coordinate</title>
+    <style>
+      body {
+        background-color: black;
+        margin: 0;
+      }
+
+      .box {
+        background-color: bisque;
+        display: block;
+        width: 150px;
+        height: 150px;
+        margin: 10px;
+        border-radius: 4px;
+      }
+
+      .clicked {
+        background-color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="box"></div>
+    <div class="box"></div>
+    <div class="box"></div>
+    <div class="box"></div>
+    <div class="box"></div>
+    <div class="box"></div>
+    <div class="box"></div>
+    <div class="box"></div>
+    <div class="box"></div>
+    <div class="box"></div>
+
+    <script>
+      // client(x, y) : 현재 브라우저에 보여지는 페이지의 최상단부터의 좌표
+      // page(x, y) : 페이지의 첫 시작부터의 좌표
+      const boxes = document.querySelectorAll('.box');
+
+      boxes.forEach((el) => {
+        el.addEventListener('click', (e) => {
+          e.target.classList.toggle('clicked');
+          console.log(`clientX : ${e.clientX}, clientY : ${e.clientY}`);
+          console.log(`pageX : ${e.pageX}, pageY : ${e.pageY}`);
+        });
+      });
+    </script>
+  </body>
+</html>
