@@ -1,0 +1,18 @@
+body {
+  background-color: black;
+  text-align: center;
+  margin: 0;
+}
+
+img {
+  display: block;
+  margin: auto;
+}
+
+button {
+  outline: none;
+  background-color: tomato;
+  color: white;
+  font-size: 32px;
+  margin: 16px;
+}
