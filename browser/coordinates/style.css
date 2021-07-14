@@ -12,28 +12,22 @@ body {
   position: absolute;
   width: 100%;
   height: 1px;
-  top: 50%;
 }
 
 .vertical {
   position: absolute;
   width: 1px;
   height: 100%;
-  left: 50%;
 }
 
 .target {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  /* transform: translate(-50%, -50%); */
 }
 
 .coordinate {
   position: absolute;
   color: white;
   font-size: 38px;
-  top: 50%;
-  left: 50%;
-  transform: translate(20px, 20px);
+  /* transform: translate(20px, 20px); */
 }

@@ -3,18 +3,26 @@ const vertical = document.querySelector('.vertical');
 const target = document.querySelector('.target');
 const coordinate = document.querySelector('.coordinate');
 
-document.addEventListener('mousemove', (e) => {
-  const x = e.clientX;
-  const y = e.clientY;
+addEventListener('load', () => {
+  const targetRect = target.getBoundingClientRect();
 
-  vertical.style.left = `${x}px`;
-  horizontal.style.top = `${y}px`;
+  const targetHalfWidth = targetRect.width / 2;
+  const targetHalfHeight = targetRect.height / 2;
 
-  target.style.left = `${x}px`;
-  target.style.top = `${y}px`;
+  document.addEventListener('mousemove', (e) => {
+    const x = e.clientX;
+    const y = e.clientY;
 
-  coordinate.style.left = `${x}px`;
-  coordinate.style.top = `${y}px`;
+    vertical.style.transform = `translateX(${x}px)`;
 
-  coordinate.innerHTML = `${x}, ${y}`;
+    horizontal.style.transform = `translateY(${y}px)`;
+
+    target.style.transform = `translate(${x - targetHalfWidth}px, ${
+      y - targetHalfHeight
+    }px)`;
+
+    coordinate.style.transform = `translate(${x + 20}px, ${y + 20}px)`;
+
+    coordinate.innerHTML = `${x}px, ${y}px`;
+  });
 });
