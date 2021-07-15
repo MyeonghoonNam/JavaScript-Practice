@@ -15,6 +15,8 @@
     </section>
 
     <script>
+      // 한 번 만들고 동적인 요소가 없다면 innerHtml
+      // 동적인 요소 변경이 자주 발생한다면 태그변수들을 활용
       const section = document.querySelector('section');
       const h2 = document.createElement('h2'); // 태그 생성
       const h4 = document.createElement('h4');
