@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DOM Handling</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <section>
+      <img src="img/avatar.jpg" alt="" />
+      <h1 class="name">Hoon</h1>
+      <h3 class="main">This is Main</h3>
+    </section>
+
+    <script>
+      const section = document.querySelector('section');
+      const h2 = document.createElement('h2'); // 태그 생성
+      const h4 = document.createElement('h4');
+
+      h2.setAttribute('class', 'header'); // 속성 추가
+      h2.textContent = 'This is Header';
+
+      h4.setAttribute('class', 'footer');
+      h4.textContent = 'This is Footer';
+
+      const h3 = document.querySelector('.main');
+      section.insertBefore(h2, h3); // (새로운 요소, 기준 요소) => 기준요소 바로 전에 새로운 요소 추가
+      section.appendChild(h4); // 요소의 맨 마지막에 요소 추가
+    </script>
+  </body>
+</html>
