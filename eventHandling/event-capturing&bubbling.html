@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Event Capture & Bubble</title>
+    <style>
+      body {
+        margin: 0;
+      }
+
+      .outer {
+        display: flex;
+        width: 400px;
+        height: 400px;
+        background-color: yellow;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .middle {
+        width: 200px;
+        height: 200px;
+        background-color: plum;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="outer">
+      <div class="middle">
+        <button>Click Me</button>
+      </div>
+    </div>
+
+    <script>
+      // 이벤트 캡쳐링 : 이벤트가 최상위(Window)부터 하위 요소(이벤트 발생 요소)까지 전파되는 것
+      // 이벤트 버블링 : 이벤트가  하위 요소(이벤트 발생 요소)부터 최상위(Window)까지 전파되는 것
+
+      // 이벤트 버블링 막는 메소드
+      // 1. event.stopPropagation()
+      // : 한 요소의 특정 이벤트를 처리하는 핸들러가 여러개인 상황에서 메소드가 사용된 핸들러의 버블링은 막지만 다른 핸들러의 버블링은 막지 못한다.
+      // 2. event.stopImmediatePropagation()
+      // : 위 메소드와 달리 요소에 할당된 이벤트 핸들러 모두의 동작을 막는다.
+      // 위 메소드들은 꼭 필요한 경우를 제외하곤 버블링을 막지 말아야한다. (강제적으로 버블링 과정에 필요한 코드가 있을지도 모르기 때문)
+      const outer = document.querySelector('.outer');
+      const middle = document.querySelector('.middle');
+      const button = document.querySelector('button');
+
+      outer.addEventListener('click', (e) => {
+        // 메소들을 사용한 버블링 막기보다 안정적인 방법
+        if (e.currentTarget !== e.target) {
+          return;
+        }
+
+        console.log(`${e.currentTarget}, ${e.target}`);
+      });
+
+      middle.addEventListener('click', (e) => {
+        // 메소들을 사용한 버블링 막기보다 안정적인 방법
+        if (e.currentTarget !== e.target) {
+          return;
+        }
+
+        console.log(`${e.currentTarget}, ${e.target}`);
+      });
+
+      button.addEventListener('click', (e) => {
+        console.log(`${e.currentTarget}, ${e.target}`);
+      });
+    </script>
+  </body>
+</html>
