@@ -10,6 +10,16 @@ input.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') onAdd();
 });
 
+items.addEventListener('click', (e) => {
+  const id = e.target.dataset.id;
+
+  if (id) {
+    const toBeDeleted = document.querySelector(`.item__row[data-id="${id}"]`);
+
+    toBeDeleted.remove();
+  }
+});
+
 function onAdd() {
   const text = input.value;
 
@@ -25,32 +35,25 @@ function onAdd() {
   input.focus();
 }
 
+// 중요 프로젝트에서는 고유한 UUID를 사용하자.
+let id = 0;
+
 function createItem(text) {
   const itemRow = document.createElement('li');
   itemRow.setAttribute('class', 'item__row');
+  itemRow.setAttribute('data-id', id);
 
-  const item = document.createElement('div');
-  item.setAttribute('class', 'item');
+  itemRow.innerHTML = `
+    <div class="item">
+      <span class="item__name">${text}</span>
+      <button class="item__deleteBtn">
+        <i class="fas fa-trash-alt" data-id=${id}></i>
+      </button>
+    </div>
+    <div class="item__divider"></div>
+  `;
 
-  const span = document.createElement('span');
-  span.setAttribute('class', 'item__name');
-  span.innerText = text;
-
-  const deleteBtn = document.createElement('button');
-  deleteBtn.setAttribute('class', 'item__deleteBtn');
-  deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
-  deleteBtn.addEventListener('click', () => {
-    itemRow.parentElement.removeChild(itemRow);
-  });
-
-  const itemDivider = document.createElement('div');
-  itemDivider.setAttribute('class', 'item__divider');
-
-  item.appendChild(span);
-  item.appendChild(deleteBtn);
-
-  itemRow.appendChild(item);
-  itemRow.appendChild(itemDivider);
+  id++;
 
   return itemRow;
 }
