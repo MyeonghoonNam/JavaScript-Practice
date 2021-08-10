@@ -1,4 +1,16 @@
-const map = (f, iter) => {
+// 테스트 케이스
+const products = [
+  {name :'반팔티', price: 15000},
+  {name :'긴팔티', price: 20000},
+  {name :'핸드폰케이스', price: 15000},
+  {name :'후드티', price: 30000},
+  {name :'바지', price: 25000},
+];
+
+const curry = f => 
+  (a, ..._) => _.length ? f(a, ..._) : (..._) => f(a, ..._);
+
+const map = curry((f, iter) => {
   const response = [];
 
   for(let value of iter) {
@@ -6,18 +18,18 @@ const map = (f, iter) => {
   }
 
   return response;
-}
+})
 
-const filter = (f, iter) => {
+const filter = curry((f, iter) => {
   const response = [];
   for(const i of iter) {
     if(f(i)) response.push(i);
   }
 
   return response;
-}
+})
 
-const reduce = (f, acc, iter) => {
+const reduce = curry((f, acc, iter) => {
   if(!iter) {
     iter = acc[Symbol.iterator]();
     acc = iter.next().value;
@@ -28,18 +40,11 @@ const reduce = (f, acc, iter) => {
   }
 
   return acc;
-}
+})
 
 const add = (a, b) => a + b;
 
 const go = (...args) => reduce((a, f) => f(a), args); 
-
-go(
-  add(0, 1),
-  a => a + 10,
-  a => a + 100,
-  console.log
-);
 
 const pipe = (f, ...fs) => (...as) => go(f(...as), ...fs);
 
@@ -48,5 +53,38 @@ const f = pipe(
   a => a + 10,
   a => a + 100
 )
+  
+  
+const mult = curry((a, b) => a * b);
+// console.log(mult(3)(2));
 
-console.log(f(0, 1));
+const mult3 = mult(3);
+// console.log(mult3(3));
+// console.log(mult3(4));
+// console.log(mult3(5));
+
+
+// 함수의 코드 변천 과정 : 출력코드는 동일하다.
+console.log(
+  reduce(
+    add,
+    map(p => p.price,
+      filter(p => p.price < 20000, products))));
+
+// go 함수를 통한 축약
+go(
+  products,
+  products => filter(p => p.price < 20000, products),
+  products => map(p => p.price, products),
+  prices => reduce(add, prices),
+  console.log
+);
+
+// currying을 통한 축약
+go(
+  products,
+  filter(p => p.price < 20000),
+  map(p => p.price),
+  reduce(add),
+  console.log
+);
