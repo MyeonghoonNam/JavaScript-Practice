@@ -9,6 +9,15 @@ const products = [
   {name :'바지', price: 25000},
 ];
 
+// filter 사용 예제
+const fruits = ['Apple', 'Banana', 'Lemon'];
+const fruitsFilter = fruits.filter((value, index, array) => {
+  console.log(value, index, array);
+
+  return value.length > 5;
+});
+
+console.log(fruitsFilter);
 
 // 사용자 정의 filter 구현
 const filter = (f, iter) => {
