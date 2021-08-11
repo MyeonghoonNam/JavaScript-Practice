@@ -95,6 +95,21 @@ const find = curry((f, iter) =>
     ([a])=>a
 ));
 
+// isIterable을 통해 이터러블객체인지 평가합니다. 
+const isIterable = a => a && a[Symbol.iterator];
+
+L.flatten = function *(iter) {
+    for (const a of iter) {
+        if (isIterable(a)) {
+            for (const b of a) yield b;
+        } else {
+            yield a;
+        }
+    }
+};
+
+const flatten = pipe(L.flatten, take(Infinity));
+
 // const f = pipe(
 //   (a, b) => a + b,
 //   a => a + 10,
