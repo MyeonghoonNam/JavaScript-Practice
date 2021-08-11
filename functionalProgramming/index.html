@@ -4,35 +4,132 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
-  <script src="./lib.js"></script>
 </head>
 <body>
+  <script src="./lib.js"></script>
   <script>
-    // 테스트 케이스
-    const products = [
-      {name :'반팔티', price: 15000},
-      {name :'긴팔티', price: 20000},
-      {name :'핸드폰케이스', price: 15000},
-      {name :'후드티', price: 30000},
-      {name :'바지', price: 25000},
+    // lib.js 파일 참고
+
+
+    // range
+    const list1 = range(4);
+    console.log(list1);
+    console.log(reduce(add, list1));
+
+    // L.range
+    const list2 = L.range(4);
+    console.log(list2);
+    console.log(reduce(add, list2));
+    
+
+    // range, L.range 성능 테스트
+    function test(name, time, f) {
+      console.time(name);
+      while(time--) f();
+      console.timeEnd(name);
+    }
+
+    test('L.range', 10, () => reduce(add, L.range(1000000)));
+    test('range', 10, () => reduce(add, range(1000000)));
+
+    // take
+    // console.time('');
+    // console.log(take(5, range(100000)));
+    // console.timeEnd('');
+
+    // take : currying 적용
+    console.time('');
+    go(
+        range(10000),
+        take(5),
+        reduce(add),
+        console.log
+    );
+    console.timeEnd('');
+
+    console.time('');
+    go(
+        L.range(10000),
+        take(5),
+        reduce(add),
+        console.log
+    );
+    console.timeEnd('');
+
+    // L.map
+    const it = L.map(a => a + 10, [1, 2, 3]);
+    console.log([...it]);
+
+    // L.filter
+    const itFilter = L.filter(a => a % 2, [1, 2, 3 ,4]);
+    // console.log(itFilter.next());
+    // console.log(itFilter.next());
+    // console.log(itFilter.next());
+    console.log(...itFilter);
+
+    // 지연성 없는 함수들의 중첩 사용
+    console.time('');
+    go(
+      range(100000),
+      map(n => n + 10),
+      filter(n => n % 2),
+      take(2),
+      console.log
+    )
+    console.timeEnd('');
+
+    // 지연성 있는 함수들의 중첩 사용
+    console.time('');
+    go(
+      L.range(100000),
+      L.map(n => n + 10),
+      L.filter(n => n % 2),
+      take(2),
+      console.log
+    )
+    console.timeEnd('');
+
+    // queryStr 실험
+    console.log(queryStr({limit: 10, offset:10, type: 'notice'}));
+
+    // join 실험
+    function *a() {
+      yield 10;
+      yield 11;
+      yield 12;
+      yield 13;
+    }
+
+    console.log(join(' - ', a())); // 10 - 11 - 12 - 13
+
+    // find 실험
+    const users =[
+      { age: 32},
+      { age: 31},
+      { age: 37},
+      { age: 28},
+      { age: 25},
+      { age: 32},
+      { age: 31},
+      { age: 37},
+      { age: 19},
+      { age: 22},
     ];
 
-    const add = (a, b) => a + b;
+    go(
+      users,
+      L.map(u => u.age),
+      find(n => n < 30),
+      console.log
+    ) // 28
 
-    // map, filter, reduce의 중첩 활용
 
-    console.log(
-      reduce(
-        add,
-        map(p => p.price,
-          filter(p => p.price < 20000, products))));
+    // L.map을 활용한 map 개선
+    console.log(map(a => a + 10, L.range(4)))
 
-    console.log(
-      reduce(
-        add,
-        filter(n => n >= 20000,
-          map(p => p.price, products))));
-    
+    // L.filter을 활용한 filter 개선
+    console.log(filter(a => a % 2, L.range(4)))
+
   </script>
 </body>
 </html>
