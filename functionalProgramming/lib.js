@@ -68,6 +68,10 @@ L.range = function *(l){
     }
 };
 
+L.map = function *(f, iter) {
+  for(const a of iter) yield f(a);
+};
+
 const take = curry((l, iter) => {
   let response = [];
   
