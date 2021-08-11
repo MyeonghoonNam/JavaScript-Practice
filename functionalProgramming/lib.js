@@ -68,6 +68,20 @@ L.range = function *(l){
     }
 };
 
+const take = curry((l, iter) => {
+  let response = [];
+  
+  for(const a of iter) {
+    response.push(a);
+
+    if(response.length === l) return response;
+  }
+
+  return response;
+})
+
+
+
 // const f = pipe(
 //   (a, b) => a + b,
 //   a => a + 10,
