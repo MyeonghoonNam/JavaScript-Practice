@@ -6,28 +6,16 @@
 //   {name :'후드티', price: 30000},
 //   {name :'바지', price: 25000},
 // ];
+const L = {};
 
 const curry = f => 
   (a, ..._) => _.length ? f(a, ..._) : (..._) => f(a, ..._);
 
-const map = curry((f, iter) => {
-  const response = [];
+const add = (a, b) => a + b;
 
-  for(let value of iter) {
-    response.push(f(value));
-  }
+const go = (...args) => reduce((a, f) => f(a), args); 
 
-  return response;
-})
-
-const filter = curry((f, iter) => {
-  const response = [];
-  for(const i of iter) {
-    if(f(i)) response.push(i);
-  }
-
-  return response;
-})
+const pipe = (f, ...fs) => (...as) => go(f(...as), ...fs);
 
 const reduce = curry((f, acc, iter) => {
   if(!iter) {
@@ -42,11 +30,31 @@ const reduce = curry((f, acc, iter) => {
   return acc;
 })
 
-const add = (a, b) => a + b;
+const take = curry((l, iter) => {
+  let response = [];
+  
+  for(const a of iter) {
+    response.push(a);
 
-const go = (...args) => reduce((a, f) => f(a), args); 
+    if(response.length === l) return response;
+  }
 
-const pipe = (f, ...fs) => (...as) => go(f(...as), ...fs);
+  return response;
+})
+
+L.map = curry(function *(f, iter) {
+  for(const a of iter) yield f(a);
+});
+
+const map = curry(pipe(L.map, take(Infinity)));
+
+L.filter = curry(function *(f, iter) {
+  for(const a of iter) {
+    if(f(a)) yield a;
+  }
+})
+
+const filter = curry(pipe(L.filter, take(Infinity)));
 
 const range = l => {
   let i = -1;
@@ -59,36 +67,12 @@ const range = l => {
   return response;
 }
 
-const L = {};
-
 L.range = function *(l){
     let i = -1;
     while (++i < l) {
         yield i;
     }
 };
-
-L.map = curry(function *(f, iter) {
-  for(const a of iter) yield f(a);
-});
-
-L.filter = curry(function *(f, iter) {
-  for(const a of iter) {
-    if(f(a)) yield a;
-  }
-})
-
-const take = curry((l, iter) => {
-  let response = [];
-  
-  for(const a of iter) {
-    response.push(a);
-
-    if(response.length === l) return response;
-  }
-
-  return response;
-})
 
 L.entries = function *(obj) {
   for (const k in obj) yield [k, obj[k]];
