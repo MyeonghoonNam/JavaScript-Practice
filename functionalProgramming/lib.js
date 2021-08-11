@@ -90,12 +90,18 @@ const take = curry((l, iter) => {
   return response;
 })
 
-const queryStr = pipe(
-  Object.entries,
-  map(([k, v]) => `${k}=${v}`),
-  reduce((a,b)=>`${a}&${b}`)
-)
+L.entries = function *(obj) {
+  for (const k in obj) yield [k, obj[k]];
+};
 
+const join = curry((sep = ',', iter) => 
+  reduce((a, b) => `${a}${sep}${b}`, iter));
+
+const queryStr = pipe(
+  L.entries,
+  map(([k, v]) => `${k}=${v}`),
+  join('&')
+)
 // const f = pipe(
 //   (a, b) => a + b,
 //   a => a + 10,
