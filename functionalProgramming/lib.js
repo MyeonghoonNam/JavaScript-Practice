@@ -90,7 +90,11 @@ const take = curry((l, iter) => {
   return response;
 })
 
-
+const queryStr = pipe(
+  Object.entries,
+  map(([k, v]) => `${k}=${v}`),
+  reduce((a,b)=>`${a}&${b}`)
+)
 
 // const f = pipe(
 //   (a, b) => a + b,
