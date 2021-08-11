@@ -102,6 +102,15 @@ const queryStr = pipe(
   map(([k, v]) => `${k}=${v}`),
   join('&')
 )
+
+const find = curry((f, iter) =>
+  go(
+    iter,
+    L.filter(f),
+    take(1),
+    ([a])=>a
+));
+
 // const f = pipe(
 //   (a, b) => a + b,
 //   a => a + 10,
