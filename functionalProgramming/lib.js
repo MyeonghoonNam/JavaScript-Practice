@@ -110,6 +110,11 @@ L.flatten = function *(iter) {
 
 const flatten = pipe(L.flatten, take(Infinity));
 
+L.flatMap = curry(pipe(L.map, L.flatten));
+
+//즉시평가 flatMap
+const flatMap = curry(pipe(L.flatMap, takeAll));
+
 // const f = pipe(
 //   (a, b) => a + b,
 //   a => a + 10,
