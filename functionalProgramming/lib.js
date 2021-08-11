@@ -59,6 +59,15 @@ const range = l => {
   return response;
 }
 
+const L = {};
+
+L.range = function *(l){
+    let i = -1;
+    while (++i < l) {
+        yield i;
+    }
+};
+
 // const f = pipe(
 //   (a, b) => a + b,
 //   a => a + 10,
