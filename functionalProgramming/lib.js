@@ -1,11 +1,3 @@
-// 테스트 케이스
-// const products = [
-//   {name :'반팔티', price: 15000},
-//   {name :'긴팔티', price: 20000},
-//   {name :'핸드폰케이스', price: 15000},
-//   {name :'후드티', price: 30000},
-//   {name :'바지', price: 25000},
-// ];
 const L = {};
 
 const curry = f => 
@@ -19,18 +11,28 @@ const pipe = (f, ...fs) => (...as) => go(f(...as), ...fs);
 
 const go1 = (a, f) => a instanceof Promise ? a.then(f) : f(a);
 
+const head = iter => go1(take(1, iter), ([h]) => h);
+
+const reduceF = (acc, a, f) =>
+  a instanceof Promise ? //a 가 Promise인지 평가
+    a.then(a=> f(acc,a), e => e === nop ? acc : Promise.reject(e)): f(acc,a);
+
 const reduce = curry((f, acc, iter) => {
-    if (!iter) {
-        iter = acc[Symbol.iterator]();
-        acc = iter.next().value;
+	if (!iter) return reduce(f, head(iter = acc[Symbol.iterator]()), iter);
+  
+  iter = iter[Symbol.iterator]();
+  
+  return go1(acc, function recur(acc) {
+    let cur
+    
+    while (!(cur = iter.next()).done) {
+      acc = reduceF(acc, cur.value, f);
+      
+      if (acc instanceof Promise) return acc.then(recur);
     }
-    return go1(acc, function recur(acc) {
-        for (const a of iter) {
-            acc = f(acc, a);
-            if(acc instanceof Promise) return acc.then(recur);
-        }
-        return acc;
-    });
+
+    return acc;
+  });
 });
 
 const take = curry((l, iter) => {
@@ -129,69 +131,3 @@ L.flatMap = curry(pipe(L.map, L.flatten));
 
 //즉시평가 flatMap
 const flatMap = curry(pipe(L.flatMap, take(Infinity)));
-
-// const f = pipe(
-//   (a, b) => a + b,
-//   a => a + 10,
-//   a => a + 100
-// )
-  
-  
-// const mult = curry((a, b) => a * b);
-// // console.log(mult(3)(2));
-
-// const mult3 = mult(3);
-// // console.log(mult3(3));
-// // console.log(mult3(4));
-// // console.log(mult3(5));
-
-
-// // 함수의 코드 변천 과정 : 출력코드는 동일하다.
-// console.log(
-//   reduce(
-//     add,
-//     map(p => p.price,
-//       filter(p => p.price < 20000, products))));
-
-// // go 함수를 통한 축약
-// go(
-//   products,
-//   products => filter(p => p.price < 20000, products),
-//   products => map(p => p.price, products),
-//   prices => reduce(add, prices),
-//   console.log
-// );
-
-// // currying을 통한 축약
-// go(
-//   products,
-//   filter(p => p.price < 20000),
-//   map(p => p.price),
-//   reduce(add),
-//   console.log
-// );
-
-
-// // 함수 조합으로 함수 만들기
-// // pipe 함수 활용
-// const total_price = pipe(
-//   map(p => p.price),
-//   reduce(add)
-// );
-
-// const base_total_price = predi => pipe(
-//   filter(predi),
-//   total_price
-// );
-
-// go(
-//   products,
-//   base_total_price(p => p.price < 20000),
-//   console.log
-//   );
-  
-// go(
-//   products,
-//   base_total_price(p => p.price >= 20000),
-//   console.log
-// );

@@ -12,19 +12,30 @@ const pipe = (f, ...fs) => (...as) => go(f(...as), ...fs);
 
 const go1 = (a, f) => a instanceof Promise ? a.then(f) : f(a);
 
+const head = iter => go1(take(1, iter), ([h]) => h);
+
+const reduceF = (acc, a, f) =>
+  a instanceof Promise ? //a 가 Promise인지 평가
+    a.then(a=> f(acc,a), e => e === nop ? acc : Promise.reject(e)): f(acc,a);
+
 const reduce = curry((f, acc, iter) => {
-    if (!iter) {
-        iter = acc[Symbol.iterator]();
-        acc = iter.next().value;
+	if (!iter) return reduce(f, head(iter = acc[Symbol.iterator]()), iter);
+  
+  iter = iter[Symbol.iterator]();
+  
+  return go1(acc, function recur(acc) {
+    let cur
+    
+    while (!(cur = iter.next()).done) {
+      acc = reduceF(acc, cur.value, f);
+      
+      if (acc instanceof Promise) return acc.then(recur);
     }
-    return go1(acc, function recur(acc) {
-        for (const a of iter) {
-            acc = f(acc, a);
-            if(acc instanceof Promise) return acc.then(recur);
-        }
-        return acc;
-    });
+
+    return acc;
+  });
 });
+
 
 const take = curry((l, iter) => {
   let res = [];
@@ -271,15 +282,28 @@ const flatMap = curry(pipe(L.flatMap, take(Infinity)));
 
 // Kleisli Composition - L.filter, filter, nop, take
 
-go([1, 2, 3, 4, 5, 6],
-  L.filter(a => a % 2),
-  take(2),
-  console.log
-);
+// go([1, 2, 3, 4, 5, 6],
+//   L.filter(a => a % 2),
+//   take(2),
+//   console.log
+// );
 
-go([1, 2, 3, 4, 5, 6],
+// go([1, 2, 3, 4, 5, 6],
+//   L.map(a => Promise.resolve(a * a)),
+//   L.filter(a => a % 2),
+//   take(2),
+//   console.log
+// );
+
+
+
+// --------------------------------
+
+
+// reduce에서 nop 지원
+go([1, 2, 3, 4, 5],
   L.map(a => Promise.resolve(a * a)),
-  L.filter(a => a % 2),
-  take(2),
+  L.filter(a => Promise.resolve(a % 2)),
+  reduce(add),
   console.log
 );
