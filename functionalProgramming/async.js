@@ -1,5 +1,6 @@
 // lib.js 학습은 아래 주석
 const L = {};
+const C = {};
 
 const curry = f => 
   (a, ..._) => _.length ? f(a, ..._) : (..._) => f(a, ..._);
@@ -17,6 +18,10 @@ const head = iter => go1(take(1, iter), ([h]) => h);
 const reduceF = (acc, a, f) =>
   a instanceof Promise ? //a 가 Promise인지 평가
     a.then(a=> f(acc,a), e => e === nop ? acc : Promise.reject(e)): f(acc,a);
+
+C.reduce = curry((f, acc, iter) => iter ? 
+  reduce(f, acc, [...iter]) : 
+  reduce(f, [...acc]));
 
 const reduce = curry((f, acc, iter) => {
 	if (!iter) return reduce(f, head(iter = acc[Symbol.iterator]()), iter);
@@ -326,15 +331,34 @@ const flatMap = curry(pipe(L.flatMap, take(Infinity)));
 //   console.log
 // )
 
-go([1, 2, 3, 4, 5, 6, 7, 8],
-  L.map(a => {
-      console.log(a);
-      return new Promise(resolve => setTimeout(() => resolve(a * a), 1000))
-  }),
-  L.filter(a => {
-      console.log(a);
-      return new Promise(resolve => setTimeout(() => resolve(a % 2), 1000))
-  }),
-  take(2),
-  console.log
-)
+// go([1, 2, 3, 4, 5, 6, 7, 8],
+//   L.map(a => {
+//       console.log(a);
+//       return new Promise(resolve => setTimeout(() => resolve(a * a), 1000))
+//   }),
+//   L.filter(a => {
+//       console.log(a);
+//       return new Promise(resolve => setTimeout(() => resolve(a % 2), 1000))
+//   }),
+//   take(2),
+//   console.log
+// )
+
+// --------------------------------
+
+
+// 지연된 함수열을 병렬 평가 - C.reduce, C.take[1]
+
+const delay500 = a => new Promise(resolve => {
+    console.log('hi');
+    setTimeout(() => resolve(a), 1000)
+});
+
+console.time("Conquer time:");
+go([1, 2, 3, 4, 5],
+    L.map(a => delay500(a * a)),
+    L.filter(a => a % 2),
+    C.reduce(add),
+    console.log,
+		()=>console.timeEnd("Conquer time:")
+);//3535 Conquer time:: 1.010s
