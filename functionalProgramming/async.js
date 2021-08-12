@@ -49,6 +49,8 @@ const reduce = curry((f, acc, iter) => {
 
 C.take = curry((l, iter) => take(l, catchNoop([...iter])));
 
+C.takeAll = C.take(Infinity);
+
 const take = curry((l, iter) => {
   let res = [];
   iter = iter[Symbol.iterator]();
@@ -84,6 +86,10 @@ L.filter = curry(function* (f, iter) {
         else if (b) yield a;
     }
 });
+
+C.map = curry(pipe(L.map, C.takeAll));
+
+C.filter = curry(pipe(L.filter, C.takeAll));
 
 const filter = curry(pipe(L.filter, take(Infinity)));
 
@@ -375,18 +381,29 @@ const flatMap = curry(pipe(L.flatMap, take(Infinity)));
 
 // 지연된 함수열을 병렬 평가 - C.reduce, C.take[2]
 
+// const delay1000 = a => new Promise(resolve => {
+//   console.log('hi');
+//   setTimeout(() => resolve(a), 1000)
+// });
+
+// console.time('');
+// go([1, 2, 3, 4, 5, 6],
+//   L.map(a => delay1000(a * a)),
+//   L.filter(a => delay1000(a % 2)),
+//   L.map(a => delay1000(a * a)),
+//   C.take(2),
+//   reduce(add),
+//   console.log,
+//   _ => console.timeEnd('')
+// );
+
+// --------------------------------
+
+// 즉시 병렬적으로 평가하기 - C.map, C.filter
 const delay1000 = a => new Promise(resolve => {
   console.log('hi');
   setTimeout(() => resolve(a), 1000)
 });
 
-console.time('');
-go([1, 2, 3, 4, 5, 6],
-  L.map(a => delay1000(a * a)),
-  L.filter(a => delay1000(a % 2)),
-  L.map(a => delay1000(a * a)),
-  C.take(2),
-  reduce(add),
-  console.log,
-  _ => console.timeEnd('')
-);
+C.map(a => delay1000(a * a), [1, 2, 3, 4]).then(console.log); // [1, 4, 9, 16]
+C.filter(a => delay1000(a % 2), [1, 2, 3, 4]).then(console.log); // [1, 3]

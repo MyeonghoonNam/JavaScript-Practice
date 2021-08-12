@@ -47,6 +47,8 @@ const reduce = curry((f, acc, iter) => {
 
 C.take = curry((l, iter) => take(l, catchNoop([...iter])));
 
+C.takeAll = C.take(Infinity);
+
 const take = curry((l, iter) => {
   let res = [];
   iter = iter[Symbol.iterator]();
@@ -82,6 +84,10 @@ L.filter = curry(function* (f, iter) {
         else if (b) yield a;
     }
 });
+
+C.map = curry(pipe(L.map, C.takeAll));
+
+C.filter = curry(pipe(L.filter, C.takeAll));
 
 const filter = curry(pipe(L.filter, take(Infinity)));
 
