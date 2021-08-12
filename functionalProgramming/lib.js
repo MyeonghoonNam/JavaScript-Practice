@@ -18,9 +18,14 @@ const reduceF = (acc, a, f) =>
   a instanceof Promise ? //a 가 Promise인지 평가
     a.then(a=> f(acc,a), e => e === nop ? acc : Promise.reject(e)): f(acc,a);
 
-C.reduce = curry((f, acc, iter) => iter ? 
-  reduce(f, acc, [...iter]) : 
-  reduce(f, [...acc]));
+function noop() {}
+
+const catchNoop = ([...arr]) =>
+  (arr.forEach(a => a instanceof Promise ? a.catch(noop) : a), arr);
+
+C.reduce = curry((f, acc, iter) => iter ?
+  reduce(f, acc, catchNoop(iter)) :
+  reduce(f, catchNoop(acc)));
 
 const reduce = curry((f, acc, iter) => {
 	if (!iter) return reduce(f, head(iter = acc[Symbol.iterator]()), iter);
@@ -39,6 +44,8 @@ const reduce = curry((f, acc, iter) => {
     return acc;
   });
 });
+
+C.take = curry((l, iter) => take(l, catchNoop([...iter])));
 
 const take = curry((l, iter) => {
   let res = [];
