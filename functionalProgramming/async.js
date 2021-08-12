@@ -219,10 +219,19 @@ const flatMap = curry(pipe(L.flatMap, take(Infinity)));
 
 // go, pipe, reduce에서 비동기 제어
 
-go(Promise.resolve(1),
-    a=>a+10,
-    a=>Promise.reject('error'),
-    a=>log('----'),
-    a=>a+1000,
-    console.log
-).catch(a=>console.log(a));//error
+// go(Promise.resolve(1),
+//     a=>a+10,
+//     a=>Promise.reject('error'),
+//     a=>log('----'),
+//     a=>a+1000,
+//     console.log
+// ).catch(a=>console.log(a));//error
+
+// --------------------------------
+
+
+// promise.then의 중요한 규칙
+
+Promise.resolve(Promise.resolve(1)).then(console.log);//1
+
+new Promise(resolve => resolve(new Promise(resolve1 => resolve1(1)))).then(console.log);//1
