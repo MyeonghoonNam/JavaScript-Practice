@@ -30,17 +30,44 @@
 // --------------------------------
 
 // 값으로서의 Promise 활용
-const go1 = (a, f) =>  a instanceof Promise ? a.then(f): f(a);
-const add5 = a => a + 5;
+// const go1 = (a, f) =>  a instanceof Promise ? a.then(f): f(a);
+// const add5 = a => a + 5;
 
-// console.log(go1(10, add5)); // 15
+// // console.log(go1(10, add5)); // 15
 
-const delay100 = a => new Promise(resolve => setTimeout(()=>resolve(a),1000));
+// const delay100 = a => new Promise(resolve => setTimeout(()=>resolve(a),1000));
 
-// console.log(go1(delay100(10), add5));//[object Promise]5
+// // console.log(go1(delay100(10), add5));//[object Promise]5
 
-const n1 = 10;
-console.log(go1(go1(n1, add5), console.log)); // 15, undefined
+// const n1 = 10;
+// console.log(go1(go1(n1, add5), console.log)); // 15, undefined
 
-const n2 = delay100(10);
-console.log(go1(go1(n2, add5), console.log)); //Promise {<pending>}, 15
+// const n2 = delay100(10);
+// console.log(go1(go1(n2, add5), console.log)); //Promise {<pending>}, 15
+
+
+// --------------------------------
+
+
+// 합성 관점에서의 Promise와 모나드
+const g = a => a+1;
+const f = a => a*a;
+
+console.log(f(g(1)));//4
+console.log(f(g())); //NaN
+
+console.log([1].map(g).map(f)); // [4]
+
+[1].map(g).map(f).forEach(r=>console.log(r)); //4
+[].map(g).map(f).forEach(r=>console.log(r)); // 결과 없음
+
+Promise.resolve(1).then(g).then(f).then(console.log); // 4
+
+new Promise(resolve =>
+  setTimeout(() => resolve(2), 100)
+).then(g).then(f).then(console.log); // 9
+
+Promise.resolve().then(g).then(f).then(console.log); // NaN
+
+// --------------------------------
+
