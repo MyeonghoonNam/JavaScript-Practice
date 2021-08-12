@@ -34,19 +34,26 @@ const reduce = curry((f, acc, iter) => {
 });
 
 const take = curry((l, iter) => {
-  let response = [];
-  
-  for(const a of iter) {
-    response.push(a);
+  let res = [];
+  iter = iter[Symbol.iterator]();
 
-    if(response.length === l) return response;
-  }
-
-  return response;
-})
+  return function recur() {
+      let cur;
+      while (!(cur = iter.next()).done) {
+          const a = cur.value;
+          if (a instanceof Promise) 
+              return a.then(a => (res.push(a), res).length === l ? res : recur())
+          res.push(a);
+          if (res.length === l) return res;
+      }
+      return res;
+  }();
+});
 
 L.map = curry(function *(f, iter) {
-  for(const a of iter) yield f(a);
+  for (const a of iter) {
+      yield go1(a,f);
+  }
 });
 
 const map = curry(pipe(L.map, take(Infinity)));

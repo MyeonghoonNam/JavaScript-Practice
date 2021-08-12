@@ -27,19 +27,26 @@ const reduce = curry((f, acc, iter) => {
 });
 
 const take = curry((l, iter) => {
-  let response = [];
-  
-  for(const a of iter) {
-    response.push(a);
+  let res = [];
+  iter = iter[Symbol.iterator]();
 
-    if(response.length === l) return response;
+  return function recur() {
+      let cur;
+      while (!(cur = iter.next()).done) {
+          const a = cur.value;
+          if (a instanceof Promise) 
+              return a.then(a => (res.push(a), res).length === l ? res : recur())
+          res.push(a);
+          if (res.length === l) return res;
+      }
+      return res;
+  }();
+});
+
+L.map = curry(function* (f, iter) {
+  for (const a of iter) {
+      yield go1(a,f);
   }
-
-  return response;
-})
-
-L.map = curry(function *(f, iter) {
-  for(const a of iter) yield f(a);
 });
 
 const map = curry(pipe(L.map, take(Infinity)));
@@ -232,6 +239,23 @@ const flatMap = curry(pipe(L.flatMap, take(Infinity)));
 
 // promise.then의 중요한 규칙
 
-Promise.resolve(Promise.resolve(1)).then(console.log);//1
+// Promise.resolve(Promise.resolve(1)).then(console.log);//1
 
-new Promise(resolve => resolve(new Promise(resolve1 => resolve1(1)))).then(console.log);//1
+// new Promise(resolve => resolve(new Promise(resolve1 => resolve1(1)))).then(console.log);//1
+
+
+// --------------------------------
+
+// 지연 평가와 Promise 적용 - L.map, map, take
+
+go([Promise.resolve(1), Promise.resolve(2), Promise.resolve(3)],
+    map(a=>a+10),
+    take(2),
+    console.log
+);
+
+go([Promise.resolve(1), Promise.resolve(2), Promise.resolve(3)],
+    L.map(a=>a+10),
+    take(2),
+    console.log
+); //[11,12]
