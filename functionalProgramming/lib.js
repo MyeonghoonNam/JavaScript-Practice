@@ -17,18 +17,21 @@ const go = (...args) => reduce((a, f) => f(a), args);
 
 const pipe = (f, ...fs) => (...as) => go(f(...as), ...fs);
 
+const go1 = (a, f) => a instanceof Promise ? a.then(f) : f(a);
+
 const reduce = curry((f, acc, iter) => {
-  if(!iter) {
-    iter = acc[Symbol.iterator]();
-    acc = iter.next().value;
-  }
-
-  for(const i of iter) {
-    acc = f(acc, i);
-  }
-
-  return acc;
-})
+    if (!iter) {
+        iter = acc[Symbol.iterator]();
+        acc = iter.next().value;
+    }
+    return go1(acc, function recur(acc) {
+        for (const a of iter) {
+            acc = f(acc, a);
+            if(acc instanceof Promise) return acc.then(recur);
+        }
+        return acc;
+    });
+});
 
 const take = curry((l, iter) => {
   let response = [];

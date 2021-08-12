@@ -10,18 +10,21 @@ const go = (...args) => reduce((a, f) => f(a), args);
 
 const pipe = (f, ...fs) => (...as) => go(f(...as), ...fs);
 
+const go1 = (a, f) => a instanceof Promise ? a.then(f) : f(a);
+
 const reduce = curry((f, acc, iter) => {
-  if(!iter) {
-    iter = acc[Symbol.iterator]();
-    acc = iter.next().value;
-  }
-
-  for(const i of iter) {
-    acc = f(acc, i);
-  }
-
-  return acc;
-})
+    if (!iter) {
+        iter = acc[Symbol.iterator]();
+        acc = iter.next().value;
+    }
+    return go1(acc, function recur(acc) {
+        for (const a of iter) {
+            acc = f(acc, a);
+            if(acc instanceof Promise) return acc.then(recur);
+        }
+        return acc;
+    });
+});
 
 const take = curry((l, iter) => {
   let response = [];
@@ -189,25 +192,37 @@ const flatMap = curry(pipe(L.flatMap, take(Infinity)));
 // --------------------------------
 
 // Kleisli Composition 관점에서의 Promise
-const users = [
-  {id:1, name:'aa'},
-  {id:2, name:'bb'},
-  {id:3, name:'cc'},
-];
+// const users = [
+//   {id:1, name:'aa'},
+//   {id:2, name:'bb'},
+//   {id:3, name:'cc'},
+// ];
 
-const getuserById = id => find(u=>u.id === id, users) || Promise.reject("없어요!"); // users에서 인자값으로 받은 id와 동일한 user를 찾는 함수 getuserById
-const f = ({name}) => name; // name을 구조분해하여 얻어 반환하는 f 
-const g = getuserById; // getuserById를 값으로 취급하는 g
-const fg = id => Promise.resolve(id).then(g).then(f).catch(a => a); // f와 g를 합성해 users에서 특정 id의 name을 추출해 반환하는 fg
+// const getuserById = id => find(u=>u.id === id, users) || Promise.reject("없어요!"); // users에서 인자값으로 받은 id와 동일한 user를 찾는 함수 getuserById
+// const f = ({name}) => name; // name을 구조분해하여 얻어 반환하는 f 
+// const g = getuserById; // getuserById를 값으로 취급하는 g
+// const fg = id => Promise.resolve(id).then(g).then(f).catch(a => a); // f와 g를 합성해 users에서 특정 id의 name을 추출해 반환하는 fg
 
-const r = fg(2);
-// console.log(r); // bb
+// const r = fg(2);
+// // console.log(r); // bb
 
-// const r2 = fg(5); //Uncaught TypeError: Cannot destructure property 'name' of 'undefined' as it is undefined.
+// // const r2 = fg(5); //Uncaught TypeError: Cannot destructure property 'name' of 'undefined' as it is undefined.
 
-users.pop();
-users.pop();
+// users.pop();
+// users.pop();
 
-fg(2).then(console.log);
+// fg(2).then(console.log);
 // const r3 = fg(2)//Uncaught TypeError: Cannot destructure property 'name' of 'undefined' as it is undefined.
 
+// --------------------------------
+
+
+// go, pipe, reduce에서 비동기 제어
+
+go(Promise.resolve(1),
+    a=>a+10,
+    a=>Promise.reject('error'),
+    a=>log('----'),
+    a=>a+1000,
+    console.log
+).catch(a=>console.log(a));//error
