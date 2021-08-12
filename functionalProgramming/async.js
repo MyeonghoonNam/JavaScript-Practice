@@ -1,3 +1,120 @@
+// lib.js 학습은 아래 주석
+const L = {};
+
+const curry = f => 
+  (a, ..._) => _.length ? f(a, ..._) : (..._) => f(a, ..._);
+
+const add = (a, b) => a + b;
+
+const go = (...args) => reduce((a, f) => f(a), args); 
+
+const pipe = (f, ...fs) => (...as) => go(f(...as), ...fs);
+
+const reduce = curry((f, acc, iter) => {
+  if(!iter) {
+    iter = acc[Symbol.iterator]();
+    acc = iter.next().value;
+  }
+
+  for(const i of iter) {
+    acc = f(acc, i);
+  }
+
+  return acc;
+})
+
+const take = curry((l, iter) => {
+  let response = [];
+  
+  for(const a of iter) {
+    response.push(a);
+
+    if(response.length === l) return response;
+  }
+
+  return response;
+})
+
+L.map = curry(function *(f, iter) {
+  for(const a of iter) yield f(a);
+});
+
+const map = curry(pipe(L.map, take(Infinity)));
+
+L.filter = curry(function *(f, iter) {
+  for(const a of iter) {
+    if(f(a)) yield a;
+  }
+})
+
+const filter = curry(pipe(L.filter, take(Infinity)));
+
+const range = l => {
+  let i = -1;
+  let response = [];
+
+  while(++i < l) {
+    response.push(i);
+  }
+
+  return response;
+}
+
+L.range = function *(l){
+    let i = -1;
+    while (++i < l) {
+        yield i;
+    }
+};
+
+L.entries = function *(obj) {
+  for (const k in obj) yield [k, obj[k]];
+};
+
+const join = curry((sep = ',', iter) => 
+  reduce((a, b) => `${a}${sep}${b}`, iter));
+
+const queryStr = pipe(
+  L.entries,
+  map(([k, v]) => `${k}=${v}`),
+  join('&')
+)
+
+const find = curry((f, iter) =>
+  go(
+    iter,
+    L.filter(f),
+    take(1),
+    ([a])=>a
+));
+
+// isIterable을 통해 이터러블객체인지 평가합니다. 
+const isIterable = a => a && a[Symbol.iterator];
+
+L.flatten = function *(iter) {
+    for (const a of iter) {
+        if (isIterable(a)) {
+            for (const b of a) yield b;
+        } else {
+            yield a;
+        }
+    }
+};
+
+const flatten = pipe(L.flatten, take(Infinity));
+
+L.flatMap = curry(pipe(L.map, L.flatten));
+
+//즉시평가 flatMap
+const flatMap = curry(pipe(L.flatMap, take(Infinity)));
+
+
+
+
+
+
+
+
 // callback, promise 비교
 
 // function add10(a, callback){
@@ -50,24 +167,47 @@
 
 
 // 합성 관점에서의 Promise와 모나드
-const g = a => a+1;
-const f = a => a*a;
+// const g = a => a+1;
+// const f = a => a*a;
 
-console.log(f(g(1)));//4
-console.log(f(g())); //NaN
+// console.log(f(g(1)));//4
+// console.log(f(g())); //NaN
 
-console.log([1].map(g).map(f)); // [4]
+// console.log([1].map(g).map(f)); // [4]
 
-[1].map(g).map(f).forEach(r=>console.log(r)); //4
-[].map(g).map(f).forEach(r=>console.log(r)); // 결과 없음
+// [1].map(g).map(f).forEach(r=>console.log(r)); //4
+// [].map(g).map(f).forEach(r=>console.log(r)); // 결과 없음
 
-Promise.resolve(1).then(g).then(f).then(console.log); // 4
+// Promise.resolve(1).then(g).then(f).then(console.log); // 4
 
-new Promise(resolve =>
-  setTimeout(() => resolve(2), 100)
-).then(g).then(f).then(console.log); // 9
+// new Promise(resolve =>
+//   setTimeout(() => resolve(2), 100)
+// ).then(g).then(f).then(console.log); // 9
 
-Promise.resolve().then(g).then(f).then(console.log); // NaN
+// Promise.resolve().then(g).then(f).then(console.log); // NaN
 
 // --------------------------------
+
+// Kleisli Composition 관점에서의 Promise
+const users = [
+  {id:1, name:'aa'},
+  {id:2, name:'bb'},
+  {id:3, name:'cc'},
+];
+
+const getuserById = id => find(u=>u.id === id, users) || Promise.reject("없어요!"); // users에서 인자값으로 받은 id와 동일한 user를 찾는 함수 getuserById
+const f = ({name}) => name; // name을 구조분해하여 얻어 반환하는 f 
+const g = getuserById; // getuserById를 값으로 취급하는 g
+const fg = id => Promise.resolve(id).then(g).then(f).catch(a => a); // f와 g를 합성해 users에서 특정 id의 name을 추출해 반환하는 fg
+
+const r = fg(2);
+// console.log(r); // bb
+
+// const r2 = fg(5); //Uncaught TypeError: Cannot destructure property 'name' of 'undefined' as it is undefined.
+
+users.pop();
+users.pop();
+
+fg(2).then(console.log);
+// const r3 = fg(2)//Uncaught TypeError: Cannot destructure property 'name' of 'undefined' as it is undefined.
 
