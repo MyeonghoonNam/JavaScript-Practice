@@ -301,9 +301,40 @@ const flatMap = curry(pipe(L.flatMap, take(Infinity)));
 
 
 // reduce에서 nop 지원
-go([1, 2, 3, 4, 5],
-  L.map(a => Promise.resolve(a * a)),
-  L.filter(a => Promise.resolve(a % 2)),
-  reduce(add),
+// go([1, 2, 3, 4, 5],
+//   L.map(a => Promise.resolve(a * a)),
+//   L.filter(a => Promise.resolve(a % 2)),
+//   reduce(add),
+//   console.log
+// );
+
+// --------------------------------
+
+
+// 지연 평가 + Promise의 효율성
+
+// go([1, 2, 3, 4, 5, 6, 7, 8],
+//   map(a => {
+//       console.log(a);
+//       return new Promise(resolve => setTimeout(() => resolve(a * a), 1000))
+//   }),
+//   filter(a => {
+//       console.log(a);
+//       return new Promise(resolve => setTimeout(() => resolve(a % 2), 1000))
+//   }),
+//   take(2),
+//   console.log
+// )
+
+go([1, 2, 3, 4, 5, 6, 7, 8],
+  L.map(a => {
+      console.log(a);
+      return new Promise(resolve => setTimeout(() => resolve(a * a), 1000))
+  }),
+  L.filter(a => {
+      console.log(a);
+      return new Promise(resolve => setTimeout(() => resolve(a % 2), 1000))
+  }),
+  take(2),
   console.log
-);
+)
