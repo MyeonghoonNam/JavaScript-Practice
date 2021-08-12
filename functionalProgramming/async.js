@@ -34,14 +34,15 @@ const take = curry((l, iter) => {
       let cur;
       while (!(cur = iter.next()).done) {
           const a = cur.value;
-          if (a instanceof Promise) 
+          if (a instanceof Promise)
               return a.then(a => (res.push(a), res).length === l ? res : recur())
+                  .catch(e=> e === nop ? recur() : Promise.reject(e)); //reject로 nop이 올 경우 다음 코드를 평가한다.
           res.push(a);
           if (res.length === l) return res;
       }
       return res;
   }();
-});
+}); 
 
 L.map = curry(function* (f, iter) {
   for (const a of iter) {
@@ -51,11 +52,15 @@ L.map = curry(function* (f, iter) {
 
 const map = curry(pipe(L.map, take(Infinity)));
 
-L.filter = curry(function *(f, iter) {
-  for(const a of iter) {
-    if(f(a)) yield a;
-  }
-})
+const nop = Symbol('nop');
+
+L.filter = curry(function* (f, iter) {
+    for (const a of iter) {
+        const b = go1(a, f);
+        if (b instanceof Promise) yield b.then(b => b ? a : Promise.reject(nop));
+        else if (b) yield a;
+    }
+});
 
 const filter = curry(pipe(L.filter, take(Infinity)));
 
@@ -248,14 +253,33 @@ const flatMap = curry(pipe(L.flatMap, take(Infinity)));
 
 // 지연 평가와 Promise 적용 - L.map, map, take
 
-go([Promise.resolve(1), Promise.resolve(2), Promise.resolve(3)],
-    map(a=>a+10),
-    take(2),
-    console.log
+// go([Promise.resolve(1), Promise.resolve(2), Promise.resolve(3)],
+//     map(a=>a+10),
+//     take(2),
+//     console.log
+// );
+
+// go([Promise.resolve(1), Promise.resolve(2), Promise.resolve(3)],
+//     L.map(a=>a+10),
+//     take(2),
+//     console.log
+// ); //[11,12]
+
+
+// --------------------------------
+
+
+// Kleisli Composition - L.filter, filter, nop, take
+
+go([1, 2, 3, 4, 5, 6],
+  L.filter(a => a % 2),
+  take(2),
+  console.log
 );
 
-go([Promise.resolve(1), Promise.resolve(2), Promise.resolve(3)],
-    L.map(a=>a+10),
-    take(2),
-    console.log
-); //[11,12]
+go([1, 2, 3, 4, 5, 6],
+  L.map(a => Promise.resolve(a * a)),
+  L.filter(a => a % 2),
+  take(2),
+  console.log
+);

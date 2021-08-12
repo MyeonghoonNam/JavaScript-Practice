@@ -41,14 +41,15 @@ const take = curry((l, iter) => {
       let cur;
       while (!(cur = iter.next()).done) {
           const a = cur.value;
-          if (a instanceof Promise) 
+          if (a instanceof Promise)
               return a.then(a => (res.push(a), res).length === l ? res : recur())
+                  .catch(e=> e === nop ? recur() : Promise.reject(e)); //reject로 nop이 올 경우 다음 코드를 평가한다.
           res.push(a);
           if (res.length === l) return res;
       }
       return res;
   }();
-});
+}); 
 
 L.map = curry(function *(f, iter) {
   for (const a of iter) {
@@ -58,11 +59,15 @@ L.map = curry(function *(f, iter) {
 
 const map = curry(pipe(L.map, take(Infinity)));
 
-L.filter = curry(function *(f, iter) {
-  for(const a of iter) {
-    if(f(a)) yield a;
-  }
-})
+const nop = Symbol('nop');
+
+L.filter = curry(function* (f, iter) {
+    for (const a of iter) {
+        const b = go1(a, f);
+        if (b instanceof Promise) yield b.then(b => b ? a : Promise.reject(nop));
+        else if (b) yield a;
+    }
+});
 
 const filter = curry(pipe(L.filter, take(Infinity)));
 
