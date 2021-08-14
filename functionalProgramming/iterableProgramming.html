@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iterable Programming Practice</title>
+  <script src="lib.js"></script>
+</head>
+<body>
+<script>
+  function f1(limit, list) {
+    go(
+      list,
+      L.filter(a => a % 2),
+      L.map(a => a * a),
+      take(limit),
+      reduce(add),
+      console.log
+    )
+  }
+
+  f1(3, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+
+  // -------------------------------------------
+
+  // 명령형
+  function f2(end) {
+    let i = 0;
+
+    while(i < end) {
+      console.log(i);
+      ++i;
+    }
+  }
+
+  f2(10);
+
+  // 함수형
+  function f3(end) {
+    go(
+      L.range(end),
+      each(console.log),
+    )
+  }
+
+  f3(10);
+
+  // ------------------------------------------
+
+  // 별 그리기
+  go(
+    L.range(6),
+    L.map(range),
+    L.filter(a => a.length > 0), 
+    L.map(L.map((_ => '*'))),
+    L.map(join('')),
+    join('\n'),
+    console.log
+  )
+
+  // ------------------------------------------
+
+  // 구구단
+  go(
+    L.range(10),
+    L.filter(a => a > 1),
+    L.map(a => go(
+      L.range(10),
+      L.filter(a => a > 0),
+      L.map(b => `${a}x${b}=${a*b}`),
+      join('\n')
+    )),
+    join('\n\n'),
+    console.log
+  )
+
+</script>
+</body>
+</html> 
