@@ -45,6 +45,15 @@ const reduce = curry((f, acc, iter) => {
   });
 });
 
+const each = f => {
+  return function(iter) {
+    for(const a of iter) f(a);
+
+    return iter;
+  }
+
+}
+
 C.take = curry((l, iter) => take(l, catchNoop([...iter])));
 
 C.takeAll = C.take(Infinity);
