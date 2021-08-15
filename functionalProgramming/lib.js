@@ -120,6 +120,12 @@ L.range = function *(l){
     }
 };
 
+L.keys = function *(obj) {
+  for(const k in obj) {
+    yield k;
+  }
+}
+
 L.values = function *(obj) {
   for(const k in obj) {
     yield obj[k];
