@@ -118,6 +118,12 @@ L.range = function *(l){
     }
 };
 
+L.values = function *(obj) {
+  for(const k in obj) {
+    yield obj[k];
+  }
+}
+
 L.entries = function *(obj) {
   for (const k in obj) yield [k, obj[k]];
 };
