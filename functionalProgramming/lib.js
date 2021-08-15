@@ -151,6 +151,8 @@ const pick = (ks, obj) => go(
   L.filter(([k, v]) => v !== undefined),
   object);
 
+const indexBy = (f, iter) => reduce((obj, a) => (obj[f(a)] = a, obj), {}, iter);
+
 const join = curry((sep = ',', iter) => 
   reduce((a, b) => `${a}${sep}${b}`, iter));
 
