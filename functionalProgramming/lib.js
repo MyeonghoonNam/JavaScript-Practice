@@ -123,6 +123,11 @@ L.range = function *(l){
 const object = entries => 
   reduce((obj, [k, v]) => (obj[k] = v, obj), {}, entries);
 
+const mapObject = (f, obj) => go(
+  obj,
+  L.entries,
+  L.map(([k, v]) => [k, f(v)]),
+  object);
 
 L.keys = function *(obj) {
   for(const k in obj) {
