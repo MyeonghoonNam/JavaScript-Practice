@@ -1,12 +1,5 @@
-// 테스트 케이스
-// const products = [
-//   {name :'반팔티', price: 15000},
-//   {name :'긴팔티', price: 20000},
-//   {name :'핸드폰케이스', price: 15000},
-//   {name :'후드티', price: 30000},
-//   {name :'바지', price: 25000},
-// ];
 const L = {};
+const C = {};
 
 const curry = f => 
   (a, ..._) => _.length ? f(a, ..._) : (..._) => f(a, ..._);
@@ -17,42 +10,95 @@ const go = (...args) => reduce((a, f) => f(a), args);
 
 const pipe = (f, ...fs) => (...as) => go(f(...as), ...fs);
 
+const go1 = (a, f) => a instanceof Promise ? a.then(f) : f(a);
+
+const head = iter => go1(take(1, iter), ([h]) => h);
+
+const reduceF = (acc, a, f) =>
+  a instanceof Promise ? //a 가 Promise인지 평가
+    a.then(a=> f(acc,a), e => e === nop ? acc : Promise.reject(e)): f(acc,a);
+
+function noop() {}
+
+const catchNoop = ([...arr]) =>
+  (arr.forEach(a => a instanceof Promise ? a.catch(noop) : a), arr);
+
+C.reduce = curry((f, acc, iter) => iter ?
+  reduce(f, acc, catchNoop(iter)) :
+  reduce(f, catchNoop(acc)));
+
 const reduce = curry((f, acc, iter) => {
-  if(!iter) {
-    iter = acc[Symbol.iterator]();
-    acc = iter.next().value;
+	if (!iter) return reduce(f, head(iter = acc[Symbol.iterator]()), iter);
+  
+  iter = iter[Symbol.iterator]();
+  
+  return go1(acc, function recur(acc) {
+    let cur
+    
+    while (!(cur = iter.next()).done) {
+      acc = reduceF(acc, cur.value, f);
+      
+      if (acc instanceof Promise) return acc.then(recur);
+    }
+
+    return acc;
+  });
+});
+
+const each = f => {
+  return function(iter) {
+    for(const a of iter) f(a);
+
+    return iter;
   }
 
-  for(const i of iter) {
-    acc = f(acc, i);
-  }
+}
 
-  return acc;
-})
+C.take = curry((l, iter) => take(l, catchNoop([...iter])));
+
+C.takeAll = C.take(Infinity);
 
 const take = curry((l, iter) => {
-  let response = [];
-  
-  for(const a of iter) {
-    response.push(a);
+  let res = [];
+  iter = iter[Symbol.iterator]();
 
-    if(response.length === l) return response;
-  }
+  return function recur() {
+      let cur;
+      while (!(cur = iter.next()).done) {
+          const a = cur.value;
+          if (a instanceof Promise)
+              return a.then(a => (res.push(a), res).length === l ? res : recur())
+                  .catch(e=> e === nop ? recur() : Promise.reject(e)); //reject로 nop이 올 경우 다음 코드를 평가한다.
+          res.push(a);
+          if (res.length === l) return res;
+      }
+      return res;
+  }();
+}); 
 
-  return response;
-})
+const takeAll = take(Infinity);
 
 L.map = curry(function *(f, iter) {
-  for(const a of iter) yield f(a);
+  for (const a of iter) {
+      yield go1(a,f);
+  }
 });
 
 const map = curry(pipe(L.map, take(Infinity)));
 
-L.filter = curry(function *(f, iter) {
-  for(const a of iter) {
-    if(f(a)) yield a;
-  }
-})
+const nop = Symbol('nop');
+
+L.filter = curry(function* (f, iter) {
+    for (const a of iter) {
+        const b = go1(a, f);
+        if (b instanceof Promise) yield b.then(b => b ? a : Promise.reject(nop));
+        else if (b) yield a;
+    }
+});
+
+C.map = curry(pipe(L.map, C.takeAll));
+
+C.filter = curry(pipe(L.filter, C.takeAll));
 
 const filter = curry(pipe(L.filter, take(Infinity)));
 
@@ -74,9 +120,38 @@ L.range = function *(l){
     }
 };
 
+const object = entries => 
+  reduce((obj, [k, v]) => (obj[k] = v, obj), {}, entries);
+
+const mapObject = (f, obj) => go(
+  obj,
+  L.entries,
+  L.map(([k, v]) => [k, f(v)]),
+  object);
+
+L.keys = function *(obj) {
+  for(const k in obj) {
+    yield k;
+  }
+}
+
+L.values = function *(obj) {
+  for(const k in obj) {
+    yield obj[k];
+  }
+}
+
 L.entries = function *(obj) {
   for (const k in obj) yield [k, obj[k]];
 };
+
+const pick = (ks, obj) => go(
+  ks,
+  L.map(k => [k, obj[k]]),
+  L.filter(([k, v]) => v !== undefined),
+  object);
+
+const indexBy = (f, iter) => reduce((obj, a) => (obj[f(a)] = a, obj), {}, iter);
 
 const join = curry((sep = ',', iter) => 
   reduce((a, b) => `${a}${sep}${b}`, iter));
@@ -114,69 +189,3 @@ L.flatMap = curry(pipe(L.map, L.flatten));
 
 //즉시평가 flatMap
 const flatMap = curry(pipe(L.flatMap, take(Infinity)));
-
-// const f = pipe(
-//   (a, b) => a + b,
-//   a => a + 10,
-//   a => a + 100
-// )
-  
-  
-// const mult = curry((a, b) => a * b);
-// // console.log(mult(3)(2));
-
-// const mult3 = mult(3);
-// // console.log(mult3(3));
-// // console.log(mult3(4));
-// // console.log(mult3(5));
-
-
-// // 함수의 코드 변천 과정 : 출력코드는 동일하다.
-// console.log(
-//   reduce(
-//     add,
-//     map(p => p.price,
-//       filter(p => p.price < 20000, products))));
-
-// // go 함수를 통한 축약
-// go(
-//   products,
-//   products => filter(p => p.price < 20000, products),
-//   products => map(p => p.price, products),
-//   prices => reduce(add, prices),
-//   console.log
-// );
-
-// // currying을 통한 축약
-// go(
-//   products,
-//   filter(p => p.price < 20000),
-//   map(p => p.price),
-//   reduce(add),
-//   console.log
-// );
-
-
-// // 함수 조합으로 함수 만들기
-// // pipe 함수 활용
-// const total_price = pipe(
-//   map(p => p.price),
-//   reduce(add)
-// );
-
-// const base_total_price = predi => pipe(
-//   filter(predi),
-//   total_price
-// );
-
-// go(
-//   products,
-//   base_total_price(p => p.price < 20000),
-//   console.log
-//   );
-  
-// go(
-//   products,
-//   base_total_price(p => p.price >= 20000),
-//   console.log
-// );

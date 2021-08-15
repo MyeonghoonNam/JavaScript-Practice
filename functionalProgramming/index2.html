@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>명령형 습관 지우기</title>
+  <script src="./lib.js"></script>
+</head>
+<body>
+  <script>
+    const users = [
+      {name:'AA', age: 35},
+      {name:'BB', age: 26},
+      {name:'CC', age: 28},
+      {name:'CC', age: 34},
+      {name:'EE', age: 23},
+    ]
+
+    // 1
+    console.log(
+      reduce((total, u) => total + u.age, 0, users));
+    
+    // const add = (a, b) => a + b;
+
+    // 2
+    console.log(
+      reduce(add, L.map(u => u.age, users)));
+
+    const ages = L.map(u => u.age);
+
+    // 3
+    console.log(
+      reduce(add, ages(users)));
+
+    // 4
+    console.log(
+      reduce((total, u) => u.age >= 30 ? total : total + u.age,
+      0,
+      users)
+    );
+    
+    // 5
+    console.log(
+      reduce(add,
+        L.filter(n => n < 30,
+          L.map(u => u.age, users)))
+    );
+
+    // -----------------------------------------
+
+    const obj = {
+      a: 1,
+      b: undefined,
+      c: 'CC',
+      d: 'DD'
+    };
+    // a=1&c=CC&d=DD 의 형태를 출력하게 구현하기
+
+    function query1(obj) {
+      let response = '';
+
+      for(const k in obj) {
+        const v = obj[k];
+
+        if(v === undefined) continue;
+        if(response !== '') response += '&';
+
+        response += `${k}=${v}`;
+      }
+
+      return response;
+    }
+
+    console.log(query1(obj));
+
+    function query2(obj) {
+      return Object
+        .entries(obj)
+        .reduce((query, [k, v], i) => {
+          if(v === undefined) return query;
+
+          return query + (i > 0 ? '&' : '') + k + '=' + v;
+          return `${query}${i > 0 ? '&' : ''}${k}=${v}`;
+        }, '');
+    }
+
+    console.log(query2(obj));
+    
+    const query3 = obj =>
+      join('&',
+        map(([k, v]) => `${k}=${v}`,
+          filter(([k, v]) => v !== undefined, Object.entries(obj))))
+    
+    console.log(query3(obj));
+    
+    const query4 = pipe(
+      Object.entries,
+      L.filter(([k, v]) => v !== undefined),
+      L.map(join('=')),
+      join('&')
+    )
+    
+    console.log(query4(obj));
+
+    // ----------------------------------------------
+
+    const split = curry((sep, str) => str.split(sep));
+
+    const queryToObject = pipe(
+      split('&'),
+      L.map(split('=')),
+      L.map(([k, v]) => ({[k] : v})),
+      reduce(Object.assign)
+    )
+
+    console.log(queryToObject('a=1&c=CC&d=DD'));
+  </script>
+</body>
+</html>
