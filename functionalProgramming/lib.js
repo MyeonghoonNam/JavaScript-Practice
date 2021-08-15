@@ -145,6 +145,12 @@ L.entries = function *(obj) {
   for (const k in obj) yield [k, obj[k]];
 };
 
+const pick = (ks, obj) => go(
+  ks,
+  L.map(k => [k, obj[k]]),
+  L.filter(([k, v]) => v !== undefined),
+  object);
+
 const join = curry((sep = ',', iter) => 
   reduce((a, b) => `${a}${sep}${b}`, iter));
 
