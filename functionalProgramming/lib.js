@@ -76,6 +76,8 @@ const take = curry((l, iter) => {
   }();
 }); 
 
+const takeAll = take(Infinity);
+
 L.map = curry(function *(f, iter) {
   for (const a of iter) {
       yield go1(a,f);
