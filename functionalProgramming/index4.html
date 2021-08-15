@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Object 다루기</title>
+  <script src="./lib.js"></script>
+</head>
+<body>
+<script>
+const obj1 = {
+    a: 1,
+    b: 2,
+    c: 3,
+    d: 4
+};
+
+go(
+  obj1,
+  Object.values,
+  map(a => a + 10),
+  take(2),
+  reduce((a, b) => a + b),
+  console.log); // 23
+
+go(
+  obj1,
+  L.values,
+  L.map(a => a + 10),
+  take(2),
+  reduce((a, b) => a + b),
+  console.log); // 23
+
+// ----------------------------------
+
+go(
+ obj1,
+ L.entries,
+ takeAll,
+ console.log);
+    
+// ▼(4) [Array(2), Array(2), Array(2), Array(2)]
+//  ▶0: (2) ["a", 1]
+//  ▶1: (2) ["b", 2]
+//  ▶2: (2) ["c", 3]
+//  ▶3: (2) ["d", 4]
+//    length: 4
+//  ▶__proto__: Array(0)
+
+go(
+  obj1,
+  L.entries,
+  L.filter(([_, v]) => v % 2), // value가 홀수 인것만 뽑기 ["a", 1] ["c", 3]
+  L.map(([k, v]) => ({ [k]: v })), // 객체화 시키기 {a: 1} {c: 3}
+  reduce(Object.assign), // assign을 통해 합치기
+  console.log); // {a: 1, c: 3}
+
+// ---------------------------------------
+
+go(
+  obj1,
+  L.keys,
+  each(console.log)); // a b c d
+// -----------------------------------------
+
+ 
+
+const a = [['a', 1], ['b', 2], ['c', 3]]; /* entries */
+
+const object1 = pipe( /*entries를 받음*/
+  map(([k, v]) => ({ [k]: v })),
+  reduce(Object.assign));
+   
+console.log(object1(a)); // {a: 1, b: 2, c: 3}
+
+const object2 = entries => reduce((obj, [k, v]) => (obj[k] = v, obj), {}, entries);
+
+console.log(object2(a)); // {a: 1, b: 2, c: 3}
+
+console.log(object2(L.entries({b: 2, c: 3}))); // {a: 1, b: 2, c: 3}
+
+let m = new Map();
+
+m.set('a', 10);
+m.set('b', 20);
+m.set('c', 30);
+
+console.log(m); // Map(3) {"a" => 10, "b" => 20, "c" => 30}
+
+console.log(JSON.stringify({a:1, b:2})) // "{"a":1,"b":2}"
+console.log(JSON.stringify(m)) // "{}"
+
+console.log(JSON.stringify(object2(m))) // "{"a":10,"b":20,"c":30}"
+
+//  ---------------------------------------
+
+
+// const mapObject = (f, obj) => _.go(
+//    obj,
+//    L.entries,
+//    L.map(([k, v]) => [k, f(v)]),
+//    object);
+
+// [['a', 1], ['b', 2], ['c', 3]] /* 1. entries화 시키기*/
+// [['a', 11], ['b', 12], ['c', 13]] /* 2. map 적용*/
+// { a: 11, b: 12, c: 13 } /* 3. object 함수 사용 */
+
+console.log(mapObject(a => a + 10, { a: 1, b: 2, c: 3}));
+// {a: 11, b: 12, c: 13}
+
+
+//  -------------------------------------------------
+
+const obj2 = { a: 1, b: 2, c: 3, d: 4, e: 5 };
+
+// const pick = (ks, obj) => go(
+//    ks,
+//    L.map(k => [k, obj[k]]),
+//    L.filter(([k, v]) => v !== undefined),
+//    object);
+
+console.log(pick(['b', 'c', 'z'], obj2));
+// { b: 2, c: 3 }
+
+
+//  -------------------------------------------------
+
+const users = [
+   { id: 5, name: 'AA', age: 35 },
+   { id: 10, name: 'BB', age: 26 },
+   { id: 19, name: 'CC', age: 28 },
+   { id: 23, name: 'DD', age: 34 },
+   { id: 24, name: 'EE', age: 23 }
+];
+
+console.log(users);
+// ...
+// ▼(5) [{…}, {…}, {…}, {…}, {…}]
+//  ▶0: {id: 5, name: "AA", age: 35}
+//  ▶1: {id: 10, name: "BB", age: 26}
+//  ▶2: {id: 19, name: "CC", age: 28}
+//  ▶3: {id: 23, name: "DD", age: 34}
+//  ▶4: {id: 24, name: "EE", age: 23}
+//    length: 5
+//  ▶__proto__: Array(0)
+// ...
+
+console.log(indexBy(u => u.id, users));
+// ...
+// ▼{5: {…}, 10: {…}, 19: {…}, 23: {…}, 24: {…}}
+//  ▶5: {id: 5, name: "AA", age: 35}
+//  ▶10: {id: 10, name: "BB", age: 26}
+//  ▶19: {id: 19, name: "CC", age: 28}
+//  ▶23: {id: 23, name: "DD", age: 34}
+//  ▶24: {id: 24, name: "EE", age: 23}
+//  ▶__proto__: Object
+// ...
+
+find(u => u.id == 19, users); // {id: 19, name: "CC", age: 28}
+/* id가 19인 것을 찾기 위해 그전 데이터를 모두 조회함 */
+
+const users2 = indexBy(u => u.id, users);
+
+// ...
+// users2[19]
+// // {id: 19, name: "CC", age: 28}
+
+// users2[23]
+// // {id: 23, name: "DD", age: 34}
+// ...
+
+console.log(users2);
+
+// ...
+// ▼{5: {…}, 10: {…}, 19: {…}, 23: {…}, 24: {…}}
+//  ▶5: {id: 5, name: "AA", age: 35}
+//  ▶10: {id: 10, name: "BB", age: 26}
+//  ▶19: {id: 19, name: "CC", age: 28}
+//  ▶23: {id: 23, name: "DD", age: 34}
+//  ▶24: {id: 24, name: "EE", age: 23}
+//  ▶__proto__: Object
+// ...
+
+go(
+   users2,
+   L.entries,
+   L.filter(([_, {age}]) => age < 30),
+   object,
+   console.log);
+
+// ...
+// ▼{10: {…}, 19: {…}, 24: {…}}
+//  ▶10: {id: 10, name: "BB", age: 26}
+//  ▶19: {id: 19, name: "CC", age: 28}
+//  ▶24: {id: 24, name: "EE", age: 23}
+//  ▶__proto__: Object
+// ...
+
+const users3 = go(
+    users2,
+    L.entries,
+    L.filter(([_, {age}]) => age < 30),
+    object);
+
+console.log(users3[19]);
+// {id: 19, name: "CC", age: 28}
+</script>
+</body>
+</html>
