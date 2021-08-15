@@ -120,6 +120,10 @@ L.range = function *(l){
     }
 };
 
+const object = entries => 
+  reduce((obj, [k, v]) => (obj[k] = v, obj), {}, entries);
+
+
 L.keys = function *(obj) {
   for(const k in obj) {
     yield k;
