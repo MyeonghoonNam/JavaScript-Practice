@@ -10,6 +10,8 @@ function App({ target, initialState }) {
       const nextState = [...todoList.state, { text }];
 
       todoList.setState(nextState);
+
+      storage.setItem('todos', JSON.stringify(nextState));
     },
   });
 

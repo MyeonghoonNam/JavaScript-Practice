@@ -2,5 +2,5 @@ const app = document.querySelector('.app');
 
 new App({
   target: app,
-  initialState: [],
+  initialState: storage.getItem('todos', []),
 });
