@@ -1,4 +1,4 @@
-function toDoForm({ target, onSubmit }) {
+export default function toDoForm({ target, onSubmit }) {
   const form = document.createElement('form');
 
   target.appendChild(form);

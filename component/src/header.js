@@ -1,4 +1,4 @@
-function header({ target, text }) {
+export default function header({ target, text }) {
   const header = document.createElement('h1');
 
   target.appendChild(header);
