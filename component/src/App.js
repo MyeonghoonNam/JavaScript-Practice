@@ -5,7 +5,7 @@ import { setItem } from './storage.js';
 
 export default function App({ target, initialState }) {
   try {
-    if(!new.target) {
+    if (!new.target) {
       throw new Error('경고 : App 컴포넌트를 new로 생성해주세요 !');
     }
 
@@ -13,34 +13,43 @@ export default function App({ target, initialState }) {
       target,
       text: 'Simple ToDoList !',
     });
-    
+
     const todoList = new toDoList({
       target,
       initialState,
       onToDo: (toDoItem) => {
-        const {index} = toDoItem.dataset;
+        const { index } = toDoItem.dataset;
         const updateState = todoList.state;
 
-        updateState[index].isCompleted = !updateState[index].isCompleted; 
-        
+        updateState[index].isCompleted = !updateState[index].isCompleted;
+
         todoList.setState(updateState);
 
         setItem('todos', JSON.stringify(updateState));
-      }
+      },
+      onRemove: (toDoItem) => {
+        const { index } = toDoItem.dataset;
+        const updateState = [...todoList.state];
+
+        updateState.splice(index, 1);
+
+        todoList.setState(updateState);
+
+        setItem('todos', JSON.stringify(updateState));
+      },
     });
 
     new toDoForm({
       target,
       onSubmit: (text) => {
         const updateState = [...todoList.state, { text, isCompleted: false }];
-  
+
         todoList.setState(updateState);
-  
+
         setItem('todos', JSON.stringify(updateState));
       },
     });
-  
-  } catch(e) {
+  } catch (e) {
     alert(e.message);
   }
 }
