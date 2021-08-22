@@ -10,16 +10,23 @@ export default function toDoList({ target, initialState, onToDo }) {
   
     this.state = initialState;
   
-    this.setState = (nextState) => {
-      this.state = nextState;
+    this.setState = (updateState) => {
+      this.state = updateState;
       this.render();
     };
   
     this.render = () => {
       toDoList.innerHTML = createToDoList();
 
-      toDoList.addEventListener('click', (e) => {
-        console.log(e.target);
+      toDoList.querySelector('ul').addEventListener('click', (e) => {
+        const clickElement = e.target; 
+        const toDoItem = clickElement.closest('li');
+        console.log()
+        if(clickElement.classList.value.includes('toDo-text')) {
+          onToDo(toDoItem);
+        } else if(clickElement.className === 'removeToDoButton'){
+
+        } 
       })
     };
   
@@ -27,8 +34,9 @@ export default function toDoList({ target, initialState, onToDo }) {
       return `
         <ul>
           ${this.state.map(({ text, isCompleted }, index) => `
-            <li data-index="${index}">
+            <li class="toDo" data-index="${index}">
               <span class="toDo-text${isCompleted ? ' isCompleted' : ''}">${text}</span>
+              <button class="removeToDoButton">delete</button>
             </li>
           `).join('')}
         </ul>
