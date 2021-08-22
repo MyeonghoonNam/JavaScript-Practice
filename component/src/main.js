@@ -4,7 +4,12 @@ import { getItem } from './storage.js';
 const app = document.querySelector('.app');
 const initialState = getItem('todos', []);
 
-new App({
-  target: app,
-  initialState,
-});
+try {
+  new App({
+    target: app,
+    initialState,
+  });
+  
+} catch(e) {
+  alert(e);
+}

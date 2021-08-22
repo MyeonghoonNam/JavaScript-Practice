@@ -4,7 +4,7 @@ export const setItem = (key, value) => {
   try {
     storage.setItem(key, value);
   } catch (e) {
-    console.log(e);
+    alert(e);
   }
 };
 
@@ -18,7 +18,7 @@ export const getItem = (key, defaultValue) => {
 
     return defaultValue;
   } catch (e) {
-    console.log(e);
+    alert(e);
 
     return defaultValue;
   }
