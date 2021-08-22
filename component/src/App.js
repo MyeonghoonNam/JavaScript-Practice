@@ -22,7 +22,7 @@ export default function App({ target, initialState }) {
     new toDoForm({
       target,
       onSubmit: (text) => {
-        const nextState = [...todoList.state, { text }];
+        const nextState = [...todoList.state, { text, isCompleted: false }];
   
         todoList.setState(nextState);
   
