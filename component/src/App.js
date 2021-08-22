@@ -1,6 +1,7 @@
 import header from './header.js';
 import toDoForm from './toDoForm.js';
 import toDoList from './toDoList.js';
+import toDoCount from './toDoCount.js';
 import { setItem } from './storage.js';
 
 export default function App({ target, initialState }) {
@@ -24,6 +25,7 @@ export default function App({ target, initialState }) {
         updateState[index].isCompleted = !updateState[index].isCompleted;
 
         todoList.setState(updateState);
+        todoCount.setState(updateState);
 
         setItem('todos', JSON.stringify(updateState));
       },
@@ -34,6 +36,7 @@ export default function App({ target, initialState }) {
         updateState.splice(index, 1);
 
         todoList.setState(updateState);
+        todoCount.setState(updateState);
 
         setItem('todos', JSON.stringify(updateState));
       },
@@ -48,6 +51,11 @@ export default function App({ target, initialState }) {
 
         setItem('todos', JSON.stringify(updateState));
       },
+    });
+
+    const todoCount = new toDoCount({
+      target,
+      initialState,
     });
   } catch (e) {
     alert(e.message);
