@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SPA - History</title>
+  </head>
+  <body>
+    <nav>
+      <a class="link" href="/">Home</a>
+      <a class="link" href="/list">List</a>
+    </nav>
+
+    <div id="app"></div>
+
+    <script>
+      const onPushState = () => {
+        const url = location.pathname;
+        console.log(location);
+
+        // routing 처리
+        if (url === '/') {
+          document.querySelector('#app').innerHTML = '<h1>Home</h1>';
+        } else if (url === '/list') {
+          document.querySelector('#app').innerHTML = '<h1>List</h1>';
+        }
+      };
+
+      window.addEventListener('click', (e) => {
+        if (e.target.className === 'link') {
+          e.preventDefault();
+
+          history.pushState(null, null, e.target.href);
+          console.log(e.target.href);
+          onPushState();
+        }
+      });
+    </script>
+  </body>
+</html>
