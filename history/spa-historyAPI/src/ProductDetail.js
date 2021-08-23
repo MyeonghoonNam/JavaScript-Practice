@@ -13,7 +13,7 @@ export default function ProductDetail({ target, initialState }) {
   this.render = () => {
     productDetail.innerHTML = `
       <h1>Product ${this.state.productId} Detail Page</h1>
-      <a href="#list">Back to List</a>
+      <a class="link" href="/list">Back to List</a>
     `;
   };
 

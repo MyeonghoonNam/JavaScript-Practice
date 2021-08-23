@@ -5,8 +5,8 @@ export default function Nav({ target }) {
 
   this.render = () => {
     nav.innerHTML = `
-      <a href="#">Home</a>
-      <a href="#list">List</a>
+      <a class="link" href="/">Home</a>
+      <a class="link" href="/list">List</a>
     `;
   };
 

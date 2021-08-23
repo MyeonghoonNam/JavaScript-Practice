@@ -13,7 +13,7 @@ export default function ListMain({ target, initialState }) {
           ${this.state
             .map(
               (item) =>
-                `<li><a href="#detail-${item.id}">${item.productName}</a></li>`
+                `<li><a class="link" href="/detail/${item.id}">${item.productName}</a></li>`
             )
             .join('')}
         </ul>

@@ -5,9 +5,10 @@ export default function DetailPage({ target }) {
   const page = document.createElement('div');
 
   const getProductId = () => {
-    const { hash } = window.location;
+    const { pathname } = location;
+    const [, , productId] = pathname.split('/');
 
-    return hash.split('-')[1];
+    return productId;
   };
 
   // #detail-1 => ['#detail', '1'];
