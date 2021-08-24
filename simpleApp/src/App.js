@@ -64,14 +64,36 @@ export default function App({ target }) {
       todos: this.state.todos,
     },
     onToggle: async (id) => {
-      await request(`/${this.state.username}/${id}/toggle`, {
+      const todoIndex = this.state.todos.findIndex((todo) => todo._id === id);
+
+      const updateTodos = [...this.state.todos];
+
+      updateTodos[todoIndex].isCompleted = !updateTodos[todoIndex].isCompleted;
+
+      this.setState({
+        ...this.state,
+        todos: updateTodos,
+      });
+
+      await request(`/${this.state.username}/${id}/toggle?delay=1000`, {
         method: 'PUT',
       });
 
       await fetchTodos();
     },
     onRemove: async (id) => {
-      await request(`/${this.state.username}/${id}`, {
+      const todoIndex = this.state.todos.findIndex((todo) => todo._id === id);
+
+      const updateTodos = [...this.state.todos];
+
+      updateTodos.splice(todoIndex, 1);
+
+      this.setState({
+        ...this.state,
+        todos: updateTodos,
+      });
+
+      await request(`/${this.state.username}/${id}?delay=2000`, {
         method: 'DELETE',
       });
 
@@ -88,7 +110,7 @@ export default function App({ target }) {
         isTodoLoading: true,
       });
 
-      const todos = await request(`/${username}?delay=5000`);
+      const todos = await request(`/${username}`);
 
       this.setState({
         ...this.state,
