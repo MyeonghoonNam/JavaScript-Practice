@@ -5,8 +5,14 @@ import { request } from './api.js';
 
 export default function App({ target }) {
   this.state = {
-    username: 'todo',
+    username: 'roto',
     todos: [],
+  };
+
+  this.setState = (updateState) => {
+    this.state = updateState;
+
+    todoList.setState(this.state.todos);
   };
 
   new Header({
@@ -19,6 +25,9 @@ export default function App({ target }) {
     onSubmit: async (content) => {
       await request(`/${this.state.username}`, {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
           content,
           isCompleted: false,
@@ -38,14 +47,18 @@ export default function App({ target }) {
     },
   });
 
-  const init = async () => {
+  const fetchTodos = async () => {
     const { username } = this.state;
 
     if (username) {
       const todos = await request(`/${username}`);
-      console.log(todos);
+
+      this.setState({
+        ...this.state,
+        todos,
+      });
     }
   };
 
-  init();
+  fetchTodos();
 }
