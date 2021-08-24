@@ -3,6 +3,7 @@ import TodoList from './TodoList.js';
 import TodoForm from './TodoForm.js';
 import { request } from './api.js';
 import UserList from './UserList.js';
+import { parse } from './querystring.js';
 
 export default function App({ target }) {
   const userListContainer = document.createElement('div');
@@ -47,6 +48,8 @@ export default function App({ target }) {
     target: userListContainer,
     initialState: this.state.userList,
     onSelect: async (username) => {
+      history.pushState(null, null, `/?selectedUserName=${username}`);
+
       this.setState({
         ...this.state,
         selectedUserName: username,
@@ -114,7 +117,7 @@ export default function App({ target }) {
         todos: updateTodos,
       });
 
-      await request(`/${this.state.selectedUserName}/${id}/toggle?delay=3000`, {
+      await request(`/${this.state.selectedUserName}/${id}/toggle`, {
         method: 'PUT',
       });
 
@@ -170,8 +173,28 @@ export default function App({ target }) {
 
   const init = async () => {
     await fetchUserList();
+
+    // url에 특정사용자를 나타내는 값이 있을경우
+    const { search } = location;
+
+    if (search.length > 0) {
+      const { selectedUserName } = parse(search.substring(1));
+
+      if (selectedUserName) {
+        this.setState({
+          ...this.state,
+          selectedUserName,
+        });
+
+        await fetchTodos();
+      }
+    }
   };
 
   this.render();
   init();
+
+  window.addEventListener('popstate', () => {
+    init();
+  });
 }
