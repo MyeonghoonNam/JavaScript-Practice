@@ -7,12 +7,16 @@ export default function App({ target }) {
   this.state = {
     username: 'roto',
     todos: [],
+    isTodoLoading: false,
   };
 
   this.setState = (updateState) => {
     this.state = updateState;
 
-    todoList.setState(this.state.todos);
+    todoList.setState({
+      isTodoLoading: this.state.isTodoLoading,
+      todos: this.state.todos,
+    });
   };
 
   new Header({
@@ -28,11 +32,6 @@ export default function App({ target }) {
         isCompleted: false,
       };
 
-      this.setState({
-        ...this.state,
-        todos: [...this.state.todos, todo],
-      });
-
       await request(`/${this.state.username}`, {
         method: 'POST',
         headers: {
@@ -40,12 +39,17 @@ export default function App({ target }) {
         },
         body: JSON.stringify(todo),
       });
+
+      await fetchTodos();
     },
   });
 
   const todoList = new TodoList({
     target,
-    initialState: this.state.todos,
+    initialState: {
+      isTodoLoading: this.state.isTodoLoading,
+      todos: this.state.todos,
+    },
     onToggle: (id) => {
       alert(`${id} 토글`);
     },
@@ -58,11 +62,17 @@ export default function App({ target }) {
     const { username } = this.state;
 
     if (username) {
-      const todos = await request(`/${username}?delay=5000`);
+      this.setState({
+        ...this.state,
+        isTodoLoading: true,
+      });
+
+      const todos = await request(`/${username}`);
 
       this.setState({
         ...this.state,
         todos,
+        isTodoLoading: false,
       });
     }
   };
