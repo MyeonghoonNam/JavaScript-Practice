@@ -1,3 +1,7 @@
+import { setItem, getItem, removeItem } from './storage.js';
+
+const TODO_TEMP_SAVE_KEY = 'TODO_TEMP_SAVE_KEY';
+
 export default function TodoForm({ target, onSubmit }) {
   const form = document.createElement('form');
 
@@ -18,7 +22,17 @@ export default function TodoForm({ target, onSubmit }) {
 
     onSubmit(content);
     input.value = '';
+
+    removeItem(TODO_TEMP_SAVE_KEY);
   });
 
   this.render();
+
+  const input = form.querySelector('input');
+
+  input.value = getItem(TODO_TEMP_SAVE_KEY, '');
+
+  input.addEventListener('keyup', (e) => {
+    setItem(TODO_TEMP_SAVE_KEY, e.target.value);
+  });
 }
