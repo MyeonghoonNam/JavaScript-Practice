@@ -50,8 +50,12 @@ export default function App({ target }) {
       isTodoLoading: this.state.isTodoLoading,
       todos: this.state.todos,
     },
-    onToggle: (id) => {
-      alert(`${id} 토글`);
+    onToggle: async (id) => {
+      await request(`/${this.state.username}/${id}/toggle`, {
+        method: 'PUT',
+      });
+
+      await fetchTodos();
     },
     onRemove: (id) => {
       alert(`${id} 삭제`);
