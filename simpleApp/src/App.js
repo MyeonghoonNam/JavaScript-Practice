@@ -13,15 +13,23 @@ export default function App({ target }) {
   this.setState = (updateState) => {
     this.state = updateState;
 
+    header.setState({
+      username: this.state.username,
+      isTodoLoading: this.state.isTodoLoading,
+    });
+
     todoList.setState({
       isTodoLoading: this.state.isTodoLoading,
       todos: this.state.todos,
     });
   };
 
-  new Header({
+  const header = new Header({
     target,
-    initialState: this.state.username,
+    initialState: {
+      username: this.state.username,
+      isTodoLoading: this.state.isTodoLoading,
+    },
   });
 
   new TodoForm({
@@ -32,7 +40,12 @@ export default function App({ target }) {
         isCompleted: false,
       };
 
-      await request(`/${this.state.username}`, {
+      this.setState({
+        ...this.state,
+        todos: [...this.state.todos, todo],
+      });
+
+      await request(`/${this.state.username}?delay=3000`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -75,7 +88,7 @@ export default function App({ target }) {
         isTodoLoading: true,
       });
 
-      const todos = await request(`/${username}`);
+      const todos = await request(`/${username}?delay=5000`);
 
       this.setState({
         ...this.state,

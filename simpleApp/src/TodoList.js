@@ -20,12 +20,7 @@ export default function TodoList({ target, initialState, onToggle, onRemove }) {
   this.render = () => {
     const { isTodoLoading, todos } = this.state;
 
-    if (isTodoLoading) {
-      todo.innerHTML = 'Loading...';
-      return;
-    }
-
-    if (todos.length === 0) {
+    if (!isTodoLoading && todos.length === 0) {
       todo.innerHTML = `Todo가 없습니다 !`;
       return;
     }
