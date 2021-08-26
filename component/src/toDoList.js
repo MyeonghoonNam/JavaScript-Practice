@@ -4,7 +4,7 @@ export default function toDoList({ target, initialState, onToDo, onRemove }) {
       throw new Error('경고 : toDoList 컴포넌트를 new로 생성해주세요 !');
     }
 
-    const toDoList = document.createElement('div');
+    const toDoList = document.createElement('section');
 
     target.appendChild(toDoList);
 
@@ -20,11 +20,15 @@ export default function toDoList({ target, initialState, onToDo, onRemove }) {
 
       toDoList.querySelector('ul').addEventListener('click', (e) => {
         const clickElement = e.target;
+        const { className } =
+          clickElement.tagName === 'S'
+            ? clickElement.closest('span')
+            : clickElement;
         const toDoItem = clickElement.closest('li');
 
-        if (clickElement.classList.value.includes('toDo-text')) {
+        if (className === 'todo__text') {
           onToDo(toDoItem);
-        } else if (clickElement.className === 'removeToDoButton') {
+        } else if (className === 'todo__button--delete') {
           onRemove(toDoItem);
         }
       });
@@ -36,11 +40,11 @@ export default function toDoList({ target, initialState, onToDo, onRemove }) {
           ${this.state
             .map(
               ({ text, isCompleted }, index) => `
-            <li class="toDo" data-index="${index}">
-              <span class="toDo-text${
-                isCompleted ? ' isCompleted' : ''
-              }">${text}</span>
-              <button class="removeToDoButton">delete</button>
+            <li class="todo" data-index="${index}">
+              <span class="todo__text">${
+                isCompleted ? `<s>${text}</s>` : `${text}`
+              }</span>
+              <button class="todo__button--delete">delete</button>
             </li>
           `
             )
