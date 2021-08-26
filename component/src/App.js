@@ -12,7 +12,7 @@ export default function App({ target, initialState }) {
 
     new header({
       target,
-      text: 'Simple ToDoList !',
+      text: 'Simple ToDoList',
     });
 
     const todoList = new toDoList({
@@ -42,6 +42,11 @@ export default function App({ target, initialState }) {
       },
     });
 
+    const todoCount = new toDoCount({
+      target,
+      initialState,
+    });
+
     new toDoForm({
       target,
       onSubmit: (text) => {
@@ -51,11 +56,6 @@ export default function App({ target, initialState }) {
 
         setItem('todos', JSON.stringify(updateState));
       },
-    });
-
-    const todoCount = new toDoCount({
-      target,
-      initialState,
     });
   } catch (e) {
     alert(e.message);

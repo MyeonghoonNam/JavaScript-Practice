@@ -17,3 +17,11 @@ button {
   border: none;
   cursor: pointer;
 }
+
+#app {
+  width: 400px;
+  margin: 100px auto;
+  background-color: #f1f0f7;
+  border-radius: 20px;
+  box-shadow: 6px 6px 5px 5px #919191;
+}
