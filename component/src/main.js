@@ -1,7 +1,7 @@
 import App from './App.js';
 import { getItem } from './storage.js';
 
-const app = document.querySelector('.app');
+const app = document.querySelector('#app');
 const initialState = getItem('todos', []);
 
 try {
@@ -9,7 +9,6 @@ try {
     target: app,
     initialState,
   });
-  
-} catch(e) {
+} catch (e) {
   alert(e);
 }

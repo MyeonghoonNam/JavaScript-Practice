@@ -13,6 +13,7 @@ export default function App({ target, initialState }) {
     new header({
       target,
       text: 'Simple ToDoList',
+      icon: '<i class="fas fa-list-ul"></i>',
     });
 
     const todoList = new toDoList({
