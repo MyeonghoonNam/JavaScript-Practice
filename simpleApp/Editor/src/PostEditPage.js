@@ -1,7 +1,7 @@
 import Editor from "./Editor.js";
 import { request } from "./api.js";
 import { getItem, setItem, removeItem } from "./storage.js";
-import { push } from "./router.js";
+import LinkButton from "./LinkButton.js";
 
 export default function PostEditPage({target, initialState}) {
   const page = document.createElement('div');
@@ -34,13 +34,18 @@ export default function PostEditPage({target, initialState}) {
         const isNew = this.state.postId === 'new'
 
         if(isNew) {
-          await request('/posts', {
+          const createdPost = await request('/posts', {
             method: 'POST',
             body: JSON.stringify(post)
           });
 
-          history.replaceState(null, null, `posts/${createdPost.id}`)
+          history.replaceState(null, null, `/posts/${createdPost.id}`)
           removeItem(postLocalSaveKey);
+
+          this.setState({
+            postId: createdPost.id
+          })
+
         } else {
           await request(`/posts/${post.id}`, {
             method: 'PUT',
@@ -49,7 +54,6 @@ export default function PostEditPage({target, initialState}) {
 
           removeItem(postLocalSaveKey);
         }
-
       }, 2000);
     }
   });
@@ -58,7 +62,19 @@ export default function PostEditPage({target, initialState}) {
     if(this.state.postId !== nextState.postId) {
       postLocalSaveKey = `temp-post-${nextState.postId}`
       this.state = nextState;
-      await fetchPost();
+
+      if(this.state.postId === 'new') {
+        const post = getItem(postLocalSaveKey, {
+          title: '',
+          content: ''
+        })
+
+        this.render();
+        editor.setState(post);
+      } else {
+        await fetchPost();
+      }
+
       return;
     }
 
@@ -104,13 +120,12 @@ export default function PostEditPage({target, initialState}) {
     }
   }
 
-  const moveListButton = document.createElement('button');
-  moveListButton.innerHTML = '목록으로';
-  
-  page.appendChild(moveListButton);
-
-  moveListButton.addEventListener('click', () => {
-    push('/');
+  new LinkButton({
+    target: page,
+    initialState: {
+      text: '목록으로 돌아가기',
+      link: '/'
+    }
   })
 
 }

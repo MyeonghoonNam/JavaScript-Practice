@@ -23,7 +23,7 @@ export default function App({target}) {
     const {pathname} = window.location;
 
     if(pathname === '/') {
-      postsPage.render();
+      postsPage.setState();
     } else if(pathname.indexOf('/posts/') === 0) {
       const [, , postId] = pathname.split('/');
 
