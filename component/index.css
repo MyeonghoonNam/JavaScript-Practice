@@ -3,12 +3,13 @@
 }
 
 body {
-  background-color: #ced3df;
+  background-color: #e3e8fe;
   text-align: center;
 }
 
 ul {
   padding: 0;
+  list-style-type: none;
 }
 
 button {
@@ -45,5 +46,53 @@ button {
   position: absolute;
   left: 0;
   top: 0;
-  transform: translate(35%, 50%);
+  transform: translate(50%, 50%);
+}
+
+.todos {
+  height: 500px;
+  overflow-y: auto;
+}
+
+.todo__row {
+  margin-bottom: 15px;
+}
+
+.todo {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 32px;
+  font-size: 18px;
+}
+
+.fa-circle {
+  color: #be9bee;
+  margin-right: 10px;
+  cursor: default;
+}
+
+.todo__text {
+  cursor: pointer;
+}
+
+.success {
+  color: #a9a9a9;
+}
+
+.todo__button--delete {
+  font-size: 16px;
+  transition: transform 300ms ease-in;
+}
+
+.todo__button--delete:hover {
+  color: red;
+  transform: scale(1.5);
+}
+
+.todo__divider {
+  display: block;
+  width: 85%;
+  height: 1px;
+  background-color: lightgray;
+  margin: auto;
 }

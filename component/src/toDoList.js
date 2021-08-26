@@ -21,12 +21,12 @@ export default function toDoList({ target, initialState, onToDo, onRemove }) {
       toDoList.querySelector('ul').addEventListener('click', (e) => {
         const clickElement = e.target;
         const { className } =
-          clickElement.tagName === 'S'
-            ? clickElement.closest('span')
+          clickElement.tagName === 'I'
+            ? clickElement.closest('button')
             : clickElement;
         const toDoItem = clickElement.closest('li');
 
-        if (className === 'todo__text') {
+        if (className.includes('todo__text')) {
           onToDo(toDoItem);
         } else if (className === 'todo__button--delete') {
           onRemove(toDoItem);
@@ -36,15 +36,28 @@ export default function toDoList({ target, initialState, onToDo, onRemove }) {
 
     const createToDoList = () => {
       return `
-        <ul>
+        <ul class="todos">
           ${this.state
             .map(
               ({ text, isCompleted }, index) => `
-            <li class="todo" data-index="${index}">
-              <span class="todo__text">${
-                isCompleted ? `<s>${text}</s>` : `${text}`
-              }</span>
-              <button class="todo__button--delete">delete</button>
+            <li class="todo__row" data-index="${index}">
+                <div class="todo">
+                ${
+                  isCompleted
+                    ? `
+                    <s class="todo__text success">
+                      <i class="far fa-circle success"></i>${text}
+                    </s>`
+                    : `
+                    <span class="todo__text fail">
+                      <i class="fas fa-circle fail"></i>${text}
+                    </span>`
+                }
+                  <button class="todo__button--delete">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                </div>
+                <div class="todo__divider"></div>
             </li>
           `
             )
