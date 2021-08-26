@@ -19,7 +19,7 @@ export default function Editor({target, initialState = {
   this.render = () => {
     if(!isInitialize) {
       editor.innerHTML = `
-        <input type="text" name="title" style="width:600px" value="${this.state.title}" />
+        <input type="text" name="title" style="width:600px; display:block" value="${this.state.title}" />
         <textarea name="content" style="width:600px; height:400px">${this.state.content}</textarea>
       `
 
