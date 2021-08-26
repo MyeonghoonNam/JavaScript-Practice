@@ -1,13 +1,10 @@
 import PostsPage from './PostsPage.js';
-import PostEditPage from './PostEditPage.js'
+import PostEditPage from './PostEditPage.js';
+import { initRouter } from './router.js';
 
 export default function App({target}) {
   const postsPage = new PostsPage({
     target,
-    onPostClick: (id) => {
-      history.pushState(null, null, `/posts/${id}`);
-      this.route();
-    }
   });
   const postEditPage = new PostEditPage({
     target,
@@ -35,4 +32,5 @@ export default function App({target}) {
   }
 
   this.route();
+  initRouter();
 }
