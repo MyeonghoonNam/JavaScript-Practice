@@ -14,7 +14,7 @@ export default function App({target}) {
         title: '',
         content: '',
       }
-    }
+    },
   });
 
   this.route = () => {
@@ -32,5 +32,5 @@ export default function App({target}) {
   }
 
   this.route();
-  initRouter();
+  initRouter(() => this.route());
 }
