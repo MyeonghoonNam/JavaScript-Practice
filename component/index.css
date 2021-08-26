@@ -31,7 +31,11 @@ button {
   height: 48px;
   padding: 8px;
   font-size: 24px;
-  background: #b07feb;
+  background: linear-gradient(
+    135deg,
+    rgba(115, 150, 255, 1) 20%,
+    rgba(176, 127, 235, 1) 80%
+  );
   border-radius: 10px 10px 0 0;
   color: white;
   cursor: default;
