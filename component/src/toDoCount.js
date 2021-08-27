@@ -4,7 +4,7 @@ export default function toDoCount({ target, initialState }) {
       throw new Error('경고 : toDoCount 컴포넌트를 new로 생성해주세요 !');
     }
 
-    const toDoCount = document.createElement('div');
+    const toDoCount = document.createElement('section');
 
     target.appendChild(toDoCount);
 
@@ -19,7 +19,7 @@ export default function toDoCount({ target, initialState }) {
       const [completedToDoCount, totalToDoCount] = calculateToDoCount();
 
       toDoCount.innerHTML = `
-        Completed ToDoCount : ${completedToDoCount} / ${totalToDoCount}
+        <div class="todo__count">Completed ToDoCount : ${completedToDoCount} / ${totalToDoCount}</div>
       `;
     };
 
