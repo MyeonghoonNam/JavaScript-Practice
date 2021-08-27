@@ -54,6 +54,7 @@ export default function App({ target, initialState }) {
         const updateState = [...todoList.state, { text, isCompleted: false }];
 
         todoList.setState(updateState);
+        todoCount.setState(updateState);
 
         setItem('todos', JSON.stringify(updateState));
       },
