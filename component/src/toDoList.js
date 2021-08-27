@@ -38,6 +38,7 @@ export default function toDoList({ target, initialState, onToDo, onRemove }) {
       return `
         <ul class="todos">
           ${this.state
+            .sort((a, b) => a.isCompleted - b.isCompleted)
             .map(
               ({ text, isCompleted }, index) => `
             <li class="todo__row" data-index="${index}">
