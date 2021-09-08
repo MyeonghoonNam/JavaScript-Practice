@@ -31,17 +31,18 @@ export default function PhotoList({ target, initialState, onScrollEded }) {
       isInitialize = true;
     }
 
-    const photos = photoList.querySelector('.photoList__photos');
+    const { photos } = this.state;
+    const $photos = photoList.querySelector('.photoList__photos');
 
-    this.state.forEach((photo) => {
-      if (photos.querySelector(`[data-id="${photo.id}"]`) === null) {
+    photos.forEach((photo) => {
+      if ($photos.querySelector(`[data-id="${photo.id}"]`) === null) {
         const li = document.createElement('li');
 
         li.setAttribute('data-id', photo.id);
         li.style = 'list-style:none';
         li.innerHTML = `<img src="${photo.imagePath}" width="100%"/>`;
 
-        photos.appendChild(li);
+        $photos.appendChild(li);
       }
     });
   };
@@ -49,7 +50,7 @@ export default function PhotoList({ target, initialState, onScrollEded }) {
   this.render();
 
   photoList.addEventListener('click', (e) => {
-    if (e.target.className === 'photoList__loadMore') {
+    if (e.target.className === 'photoList__loadMore' && !this.state.isLoading) {
       onScrollEded();
     }
   });
