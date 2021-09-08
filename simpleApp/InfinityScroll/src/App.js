@@ -12,6 +12,7 @@ export default function App({ target }) {
     limit: 5,
     nextStart: 0, // limit 수 만큼 계속 더해진다.
     photos: [],
+    totalPhotoCount: 0,
     isLoading: false,
   };
 
@@ -21,6 +22,7 @@ export default function App({ target }) {
     photoListComponent.setState({
       photos: nextState.photos,
       isLoading: this.state.isLoading,
+      totalPhotoCount: this.state.totalPhotoCount,
     });
   };
 
@@ -29,6 +31,7 @@ export default function App({ target }) {
     initialState: {
       isLoading: this.state.isLoading,
       photos: this.state.photos,
+      totalPhotoCount: this.state.totalPhotoCount,
     },
     onScrollEnded: async () => {
       await fetchPhotos();
@@ -54,5 +57,16 @@ export default function App({ target }) {
     });
   };
 
-  fetchPhotos();
+  const initialize = async () => {
+    const totalPhotoCount = await request('/cat-photos/count');
+
+    this.setState({
+      ...this.state,
+      totalPhotoCount,
+    });
+
+    await fetchPhotos();
+  };
+
+  initialize();
 }
