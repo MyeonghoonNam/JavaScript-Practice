@@ -7,7 +7,7 @@ initialState: [
 ]
 */
 
-export default function PhotoList({ target, initialState, onScrollEded }) {
+export default function PhotoList({ target, initialState, onScrollEnded }) {
   let isInitialize = false;
   const photoList = document.createElement('div');
   photoList.style.textAlign = 'center';
@@ -51,7 +51,16 @@ export default function PhotoList({ target, initialState, onScrollEded }) {
 
   photoList.addEventListener('click', (e) => {
     if (e.target.className === 'photoList__loadMore' && !this.state.isLoading) {
-      onScrollEded();
+      onScrollEnded();
+    }
+  });
+
+  window.addEventListener('scroll', () => {
+    const isScrollEnded =
+      window.scrollY + window.innerHeight + 100 >= document.body.offsetHeight;
+
+    if (isScrollEnded && !this.state.isLoading) {
+      onScrollEnded();
     }
   });
 }

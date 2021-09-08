@@ -30,7 +30,7 @@ export default function App({ target }) {
       isLoading: this.state.isLoading,
       photos: this.state.photos,
     },
-    onScrollEded: async () => {
+    onScrollEnded: async () => {
       await fetchPhotos();
     },
   });
