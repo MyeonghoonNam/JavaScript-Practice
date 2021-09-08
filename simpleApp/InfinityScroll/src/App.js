@@ -10,7 +10,7 @@ export default function App({ target }) {
 
   this.state = {
     limit: 5,
-    start: 0, // limit 수 만큼 계속 더해진다.
+    nextStart: 0, // limit 수 만큼 계속 더해진다.
     photos: [],
   };
 
@@ -22,14 +22,21 @@ export default function App({ target }) {
   const photoListComponent = new PhotoList({
     target,
     initialState: this.state.photos,
+    onScrollEded: async () => {
+      await fetchPhotos();
+    },
   });
 
   const fetchPhotos = async () => {
-    const photos = await request(`/cat-photos?_limit=5&_start=0`);
+    const { limit, nextStart } = this.state;
+    const photos = await request(
+      `/cat-photos?_limit=${limit}&_start=${nextStart}`
+    );
 
     this.setState({
       ...this.state,
-      photos,
+      nextStart: nextStart + limit,
+      photos: this.state.photos.concat(photos),
     });
   };
 
