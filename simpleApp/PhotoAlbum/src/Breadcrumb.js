@@ -1,4 +1,4 @@
-export default function Beadcrumb({ target, initialState }) {
+export default function Beadcrumb({ target, initialState, onClick }) {
   const $breadcrumb = document.createElement('nav');
   $breadcrumb.className = 'Breadcrumb';
 
@@ -13,14 +13,23 @@ export default function Beadcrumb({ target, initialState }) {
 
   this.render = () => {
     $breadcrumb.innerHTML = `
-      <div>Root</div>
+      <div class="Breadcrumb__item">Root</div>
       ${this.state
         .map(
-          ({ name }) => `
-            <div>${name}</div>
+          ({ id, name }) => `
+            <div class="Breadcrumb__item" data-id="${id}">${name}</div>
           `
         )
         .join('')}
     `;
   };
+
+  this.render();
+
+  $breadcrumb.addEventListener('click', (e) => {
+    const $breadcrumbItem = e.target.closest('.Breadcrumb__item');
+    const { id } = $breadcrumbItem.dataset;
+
+    onClick(id);
+  });
 }

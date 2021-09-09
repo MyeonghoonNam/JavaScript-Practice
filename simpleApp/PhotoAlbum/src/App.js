@@ -35,6 +35,25 @@ export default function App({ target }) {
   const breadcrumb = new Beadcrumb({
     target,
     initialState: this.state.paths,
+    onClick: async (id) => {
+      // 클릭한 경로 외의 path를 제거한다.
+      if (id) {
+        const nextPaths = id ? [...this.state.paths] : [];
+        const pathIndex = nextPaths.findIndex((path) => path.id === id);
+
+        this.setState({
+          ...this.state,
+          paths: nextPaths.slice(0, pathIndex + 1),
+        });
+      } else {
+        this.setState({
+          ...this.state,
+          paths: [],
+        });
+      }
+
+      await fetchNodes(id);
+    },
   });
 
   const nodes = new Nodes({
