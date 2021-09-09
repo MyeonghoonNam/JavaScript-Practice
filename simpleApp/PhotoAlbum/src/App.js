@@ -26,13 +26,17 @@ export default function App({ target }) {
   });
 
   const fetchNodes = async (id) => {
-    const nodes = await request(id ? `/${id}` : '/');
+    try {
+      const nodes = await request(id ? `/${id}` : '/');
 
-    this.setState({
-      ...this.state,
-      isRoot: id ? false : true,
-      nodes,
-    });
+      this.setState({
+        ...this.state,
+        isRoot: id ? false : true,
+        nodes,
+      });
+    } catch (e) {
+      alert(e.message);
+    }
   };
 
   fetchNodes();
