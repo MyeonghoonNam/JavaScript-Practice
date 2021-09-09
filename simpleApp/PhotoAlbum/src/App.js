@@ -1,6 +1,7 @@
 import Nodes from './Nodes.js';
 import Loading from './Loading.js';
 import ImageViewer from './ImageViewer.js';
+import Beadcrumb from './Breadcrumb.js';
 import { request } from './api.js';
 
 export default function App({ target }) {
@@ -25,9 +26,16 @@ export default function App({ target }) {
     });
 
     loading.setState(this.state.isLoading);
+
+    breadcrumb.setState(this.state.paths);
   };
 
   const loading = new Loading({ target });
+
+  const breadcrumb = new Beadcrumb({
+    target,
+    initialState: this.state.paths,
+  });
 
   const nodes = new Nodes({
     target,
