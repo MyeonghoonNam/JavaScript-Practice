@@ -1,10 +1,12 @@
 import Nodes from './Nodes.js';
+import ImageViewer from './ImageViewer.js';
 import { request } from './api.js';
 
 export default function App({ target }) {
   this.state = {
     isRoot: true,
     nodes: [],
+    selectedImageUrl: null,
   };
 
   this.setState = (nextState) => {
@@ -13,6 +15,11 @@ export default function App({ target }) {
     nodes.setState({
       isRoot: this.state.isRoot,
       nodes: this.state.nodes,
+      selectedImageUrl: null,
+    });
+
+    imageViewer.setState({
+      selectedImageUrl: this.state.selectedImageUrl,
     });
   };
 
@@ -25,7 +32,22 @@ export default function App({ target }) {
     onClick: async (node) => {
       if (node.type === 'DIRECTORY') {
         await fetchNodes(node.id);
+      } else if (node.type === 'FILE') {
+        this.setState({
+          ...this.state,
+          selectedImageUrl: `https://cat-api.roto.codes/static${node.filePath}`,
+        });
       }
+    },
+  });
+
+  const imageViewer = new ImageViewer({
+    target,
+    onClose: () => {
+      this.setState({
+        ...this.state,
+        selectedImageUrl: null,
+      });
     },
   });
 
