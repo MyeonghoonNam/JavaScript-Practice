@@ -22,7 +22,11 @@ export default function App({ target }) {
       isRoot: this.state.isRoot,
       nodes: this.state.nodes,
     },
-    onClick: () => {},
+    onClick: async (node) => {
+      if (node.type === 'DIRECTORY') {
+        await fetchNodes(node.id);
+      }
+    },
   });
 
   const fetchNodes = async (id) => {
