@@ -1,4 +1,5 @@
 import Nodes from './Nodes.js';
+import Loading from './Loading.js';
 import ImageViewer from './ImageViewer.js';
 import { request } from './api.js';
 
@@ -8,6 +9,7 @@ export default function App({ target }) {
     nodes: [],
     paths: [],
     selectedImageUrl: null,
+    isLoading: false,
   };
 
   this.setState = (nextState) => {
@@ -21,7 +23,11 @@ export default function App({ target }) {
     imageViewer.setState({
       selectedImageUrl: this.state.selectedImageUrl,
     });
+
+    loading.setState(this.state.isLoading);
   };
+
+  const loading = new Loading({ target });
 
   const nodes = new Nodes({
     target,
@@ -73,12 +79,18 @@ export default function App({ target }) {
 
   const fetchNodes = async (id) => {
     try {
+      this.setState({
+        ...this.state,
+        isLoading: true,
+      });
+
       const nodes = await request(id ? `/${id}` : '/');
 
       this.setState({
         ...this.state,
         isRoot: id ? false : true,
         nodes,
+        isLoading: false,
       });
     } catch (e) {
       alert(e.message);
