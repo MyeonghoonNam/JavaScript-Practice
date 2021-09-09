@@ -1,4 +1,4 @@
-export default function Nodes({ target, initialState, onClick }) {
+export default function Nodes({ target, initialState, onClick, onPrevClick }) {
   const $nodes = document.createElement('div');
   $nodes.classList.add('Nodes');
 
@@ -46,18 +46,12 @@ export default function Nodes({ target, initialState, onClick }) {
   $nodes.addEventListener('click', (e) => {
     const $node = e.target.closest('.Node');
     const { id } = $node.dataset;
-
-    // id 없는 경우 뒤로가기로 처리
-    if (!id) {
-      // 문서 뒤로가기 로직 구현
-    }
-
     const node = this.state.nodes.find((node) => node.id === id);
 
     if (node) {
       onClick(node);
     } else {
-      alert('올바르지 않은 문서입니다.');
+      onPrevClick();
     }
   });
 }
