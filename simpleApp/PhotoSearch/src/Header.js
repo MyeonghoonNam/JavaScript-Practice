@@ -15,11 +15,13 @@ export default function Header({ target, initialState, onKeywordInput }) {
   this.state = initialState;
 
   this.setState = (nextState) => {
-    this.state = nextState;
+    if (this.state.keyword !== nextState.keyword) {
+      this.state = nextState;
 
-    keyword.setState({
-      value: nextState.keyword,
-    });
+      keyword.setState({
+        value: this.state.keyword,
+      });
+    }
   };
 
   const keyword = new Keyword({

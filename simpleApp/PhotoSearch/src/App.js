@@ -11,6 +11,10 @@ export default function App({ target }) {
   this.setState = (nextState) => {
     this.state = nextState;
 
+    header.setState({
+      keyword: this.state.keyword,
+    });
+
     suggestkeywords.setState(this.state.keywords);
   };
 
@@ -25,6 +29,7 @@ export default function App({ target }) {
 
         this.setState({
           ...this.state,
+          keyword,
           keywords,
         });
       }
@@ -34,5 +39,11 @@ export default function App({ target }) {
   const suggestkeywords = new Suggestkeywords({
     target,
     initialState: this.state.keywords,
+    onKeywordSelect: (keyword) => {
+      this.setState({
+        ...this.state,
+        keyword,
+      });
+    },
   });
 }
