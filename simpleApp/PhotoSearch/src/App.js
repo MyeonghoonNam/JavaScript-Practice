@@ -3,6 +3,7 @@ import Suggestkeywords from './SuggestKeyword.js';
 import SearchResults from './SearchResults.js';
 import debounce from './debounce.js';
 import { request } from './api.js';
+import { setItem, getItem } from './storage.js';
 
 export default function App({ target }) {
   this.state = {
@@ -10,6 +11,8 @@ export default function App({ target }) {
     keywords: [],
     catImages: [],
   };
+
+  this.cache = getItem('keywords_cache', {});
 
   this.setState = (nextState) => {
     this.state = nextState;
@@ -34,7 +37,15 @@ export default function App({ target }) {
     },
     onKeywordInput: debounce(async (keyword) => {
       if (keyword.trim().length > 1) {
-        const keywords = await request(`/keywords?q=${keyword}`);
+        let keywords = null;
+
+        if (this.cache[keyword]) {
+          keywords = this.cache[keyword];
+        } else {
+          keywords = await request(`/keywords?q=${keyword}`);
+          this.cache[keyword] = keywords;
+          setItem('keywords_cache', this.cache);
+        }
 
         this.setState({
           ...this.state,
