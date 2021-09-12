@@ -96,6 +96,9 @@ export default function App({ target }) {
 
   const imageViewer = new ImageViewer({
     target,
+    initialState: {
+      selectedImageUrl: this.state.selectedImageUrl
+    },
     onClose: () => {
       this.setState({
         ...this.state,
