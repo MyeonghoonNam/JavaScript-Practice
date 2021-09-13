@@ -3,6 +3,7 @@ import Loading from './Loading.js';
 import ImageViewer from './ImageViewer.js';
 import Breadcrumb from './Breadcrumb.js';
 import { request } from './api.js';
+import { validateState } from './validate.js';
 
 export default function App({ target }) {
   this.state = {
@@ -14,6 +15,8 @@ export default function App({ target }) {
   };
 
   this.setState = (nextState) => {
+    validateState(nextState);
+
     this.state = nextState;
 
     nodes.setState({
@@ -97,7 +100,7 @@ export default function App({ target }) {
   const imageViewer = new ImageViewer({
     target,
     initialState: {
-      selectedImageUrl: this.state.selectedImageUrl
+      selectedImageUrl: this.state.selectedImageUrl,
     },
     onClose: () => {
       this.setState({
