@@ -7,8 +7,13 @@ export default function Nodes({ target, initialState, onClick, onPrevClick }) {
   this.state = initialState;
 
   this.setState = (nextState) => {
-    this.state = nextState;
-    this.render();
+    if (
+      this.state.isRoot !== nextState.isRoot ||
+      JSON.stringify(this.state.nodes) !== JSON.stringify(nextState.nodes)
+    ) {
+      this.state = nextState;
+      this.render();
+    }
   };
 
   this.render = () => {

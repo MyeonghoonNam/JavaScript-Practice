@@ -7,8 +7,10 @@ export default function ImageViewer({ target, initialState, onClose }) {
   this.state = initialState;
 
   this.setState = (nextState) => {
-    this.state = nextState;
-    this.render();
+    if (this.state.selectedImageUrl !== nextState.selectedImageUrl) {
+      this.state = nextState;
+      this.render();
+    }
   };
 
   this.render = () => {

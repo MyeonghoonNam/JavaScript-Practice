@@ -7,8 +7,10 @@ export default function Loading({ target }) {
   this.state = false;
 
   this.setState = (nextState) => {
-    this.state = nextState;
-    this.render();
+    if (this.state !== nextState) {
+      this.state = nextState;
+      this.render();
+    }
   };
 
   this.render = () => {

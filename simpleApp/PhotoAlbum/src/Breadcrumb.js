@@ -6,9 +6,11 @@ export default function Breadcrumb({ target, initialState, onClick }) {
 
   this.state = initialState;
 
-  this.setState = (nextStae) => {
-    this.state = nextStae;
-    this.render();
+  this.setState = (nextState) => {
+    if (JSON.stringify(this.state) !== JSON.stringify(nextState)) {
+      this.state = nextState;
+      this.render();
+    }
   };
 
   this.render = () => {
