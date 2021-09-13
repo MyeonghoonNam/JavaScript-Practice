@@ -15,6 +15,8 @@ export default function TaskQueue() {
       await request(task.url, {
         method: task.method || 'GET',
       });
+
+      this.run();
     }
   };
 }

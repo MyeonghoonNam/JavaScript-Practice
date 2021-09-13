@@ -23,26 +23,6 @@ export default function App({ target }) {
     });
   };
 
-  const tasks = new TaskQueue();
-
-  const incompletedTodoList = new TodoList({
-    target,
-    initialState: {
-      title: '완료되지 않은 일들',
-      todos: [],
-    },
-    onDrop: (todoId) => handleTodoDrop(todoId, false),
-  });
-
-  const completedTodoList = new TodoList({
-    target,
-    initialState: {
-      title: '완료된 일들',
-      todos: [],
-    },
-    onDrop: (todoId) => handleTodoDrop(todoId, true),
-  });
-
   const handleTodoDrop = async (todoId, updateValue) => {
     const nextTodos = [...this.state.todos];
     const todoIndex = nextTodos.findIndex((todo) => todo._id === todoId);
@@ -60,6 +40,23 @@ export default function App({ target }) {
     });
   };
 
+  const handleTodoRemove = (todoId) => {
+    const nextTodos = [...this.state.todos];
+    const todoIndex = nextTodos.findIndex((todo) => todo._id === todoId);
+
+    nextTodos.splice(todoIndex, 1);
+
+    this.setState({
+      ...this.state,
+      todos: nextTodos,
+    });
+
+    tasks.addTask({
+      url: `/${todoId}/toggle`,
+      method: 'DELETE',
+    });
+  };
+
   const fetchTodos = async () => {
     try {
       const todos = await request('');
@@ -72,6 +69,28 @@ export default function App({ target }) {
       alert(e.message);
     }
   };
+
+  const tasks = new TaskQueue();
+
+  const incompletedTodoList = new TodoList({
+    target,
+    initialState: {
+      title: '완료되지 않은 일들',
+      todos: [],
+    },
+    onDrop: (todoId) => handleTodoDrop(todoId, false),
+    onRemove: handleTodoRemove,
+  });
+
+  const completedTodoList = new TodoList({
+    target,
+    initialState: {
+      title: '완료된 일들',
+      todos: [],
+    },
+    onDrop: (todoId) => handleTodoDrop(todoId, true),
+    onRemove: handleTodoRemove,
+  });
 
   fetchTodos();
 

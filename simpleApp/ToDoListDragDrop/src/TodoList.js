@@ -20,7 +20,7 @@ export default function TodoList({ target, initialState, onDrop, onRemove }) {
         ${todos
           .map(
             (todo) =>
-              `<li data-id="${todo._id}" draggable="true">${todo.content}</li>`
+              `<li data-id="${todo._id}" draggable="true">${todo.content}<button>x</button></li>`
           )
           .join('')}
       </ul>
