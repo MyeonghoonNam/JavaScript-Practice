@@ -1,7 +1,9 @@
 import TodoList from './TodoList.js';
 import { request } from './api.js';
+import TaskQueue from './TaskQueue.js';
 
 export default function App({ target }) {
+  const tasks = new TaskQueue();
   this.state = {
     todos: [],
   };
@@ -29,11 +31,21 @@ export default function App({ target }) {
       todos: [],
     },
     onDrop: async (todoId) => {
-      await request(`/${todoId}/toggle`, {
-        method: 'PUT',
+      const nextTodos = [...this.state.todos];
+      const todoIndex = nextTodos.findIndex((todo) => todo._id === todoId);
+
+      nextTodos[todoIndex].isCompleted = false;
+
+      this.setState({
+        ...this.state,
+        todos: nextTodos,
       });
 
-      await fetchTodos();
+      tasks.addTask(async () => {
+        await request(`/${todoId}/toggle`, {
+          method: 'PUT',
+        });
+      });
     },
   });
 
@@ -44,11 +56,20 @@ export default function App({ target }) {
       todos: [],
     },
     onDrop: async (todoId) => {
-      await request(`/${todoId}/toggle`, {
-        method: 'PUT',
+      const nextTodos = [...this.state.todos];
+      const todoIndex = nextTodos.findIndex((todo) => todo._id === todoId);
+      nextTodos[todoIndex].isCompleted = true;
+
+      this.setState({
+        ...this.state,
+        todos: nextTodos,
       });
 
-      await fetchTodos();
+      tasks.addTask(async () => {
+        await request(`/${todoId}/toggle`, {
+          method: 'PUT',
+        });
+      });
     },
   });
 
@@ -66,4 +87,11 @@ export default function App({ target }) {
   };
 
   fetchTodos();
+
+  const button = document.createElement('button');
+  button.textContent = '변경내용 동기화';
+
+  target.appendChild(button);
+
+  button.addEventListener('click', () => tasks.run());
 }
