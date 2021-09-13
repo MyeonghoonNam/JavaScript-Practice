@@ -1,11 +1,15 @@
 import { request } from './api.js';
 
 export default function TaskQueue() {
-  const tasks = [];
+  let tasks = [];
 
   this.addTask = (task) => {
     tasks.push(task);
     console.log(tasks);
+  };
+
+  this.removeTasks = (urlPattern) => {
+    tasks = tasks.filter((task) => task.url.includes(urlPattern));
   };
 
   this.run = async () => {

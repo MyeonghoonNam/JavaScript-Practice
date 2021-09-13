@@ -51,6 +51,8 @@ export default function App({ target }) {
       todos: nextTodos,
     });
 
+    tasks.removeTasks(`/${todoId}`);
+
     tasks.addTask({
       url: `/${todoId}/toggle`,
       method: 'DELETE',
