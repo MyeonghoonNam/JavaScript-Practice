@@ -44,12 +44,12 @@ export default function TodoList({ target, initialState, onDrop }) {
   todoList.addEventListener('drop', (e) => {
     e.preventDefault();
 
-    const droppedTodoId = e.dataTransfer.getData(todoId);
+    const droppedTodoId = e.dataTransfer.getData('todoId');
 
     // 현재 TodoList의 Todo가 아닌 경우 상위 컴포넌트에 알림
     const { todos } = this.state;
 
-    if (!todos.find((todo) => todo.id === droppedTodoId)) {
+    if (!todos.find((todo) => todo._id === droppedTodoId)) {
       onDrop(droppedTodoId);
     }
   });
