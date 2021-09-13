@@ -3,7 +3,6 @@ import { request } from './api.js';
 import TaskQueue from './TaskQueue.js';
 
 export default function App({ target }) {
-  const tasks = new TaskQueue();
   this.state = {
     todos: [],
   };
@@ -24,29 +23,15 @@ export default function App({ target }) {
     });
   };
 
+  const tasks = new TaskQueue();
+
   const incompletedTodoList = new TodoList({
     target,
     initialState: {
       title: '완료되지 않은 일들',
       todos: [],
     },
-    onDrop: async (todoId) => {
-      const nextTodos = [...this.state.todos];
-      const todoIndex = nextTodos.findIndex((todo) => todo._id === todoId);
-
-      nextTodos[todoIndex].isCompleted = false;
-
-      this.setState({
-        ...this.state,
-        todos: nextTodos,
-      });
-
-      tasks.addTask(async () => {
-        await request(`/${todoId}/toggle`, {
-          method: 'PUT',
-        });
-      });
-    },
+    onDrop: (todoId) => handleTodoDrop(todoId, false),
   });
 
   const completedTodoList = new TodoList({
@@ -55,23 +40,25 @@ export default function App({ target }) {
       title: '완료된 일들',
       todos: [],
     },
-    onDrop: async (todoId) => {
-      const nextTodos = [...this.state.todos];
-      const todoIndex = nextTodos.findIndex((todo) => todo._id === todoId);
-      nextTodos[todoIndex].isCompleted = true;
-
-      this.setState({
-        ...this.state,
-        todos: nextTodos,
-      });
-
-      tasks.addTask(async () => {
-        await request(`/${todoId}/toggle`, {
-          method: 'PUT',
-        });
-      });
-    },
+    onDrop: (todoId) => handleTodoDrop(todoId, true),
   });
+
+  const handleTodoDrop = async (todoId, updateValue) => {
+    const nextTodos = [...this.state.todos];
+    const todoIndex = nextTodos.findIndex((todo) => todo._id === todoId);
+
+    nextTodos[todoIndex].isCompleted = updateValue;
+
+    this.setState({
+      ...this.state,
+      todos: nextTodos,
+    });
+
+    tasks.addTask({
+      url: `/${todoId}/toggle`,
+      method: 'PUT',
+    });
+  };
 
   const fetchTodos = async () => {
     try {

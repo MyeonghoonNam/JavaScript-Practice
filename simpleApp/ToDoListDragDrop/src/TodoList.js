@@ -1,4 +1,4 @@
-export default function TodoList({ target, initialState, onDrop }) {
+export default function TodoList({ target, initialState, onDrop, onRemove }) {
   const todoList = document.createElement('div');
   todoList.setAttribute('droppable', 'true');
 
@@ -51,6 +51,16 @@ export default function TodoList({ target, initialState, onDrop }) {
 
     if (!todos.find((todo) => todo._id === droppedTodoId)) {
       onDrop(droppedTodoId);
+    }
+  });
+
+  todoList.addEventListener('click', (e) => {
+    if (e.target.tagName === 'BUTTON') {
+      const li = e.target.closest('li');
+
+      if (li) {
+        onRemove(li.dataset.id);
+      }
     }
   });
 }
