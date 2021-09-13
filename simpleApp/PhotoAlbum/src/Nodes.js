@@ -59,4 +59,10 @@ export default function Nodes({ target, initialState, onClick, onPrevClick }) {
       onPrevClick();
     }
   });
+
+  window.addEventListener('keyup', (e) => {
+    if (e.key === 'Backspace') {
+      onPrevClick();
+    }
+  });
 }

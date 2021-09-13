@@ -81,18 +81,20 @@ export default function App({ target }) {
       }
     },
     onPrevClick: async () => {
-      const nextPaths = [...this.state.paths];
-      nextPaths.pop();
+      if (this.state.isLoading === false) {
+        const nextPaths = [...this.state.paths];
+        nextPaths.pop();
 
-      this.setState({
-        ...this.state,
-        paths: nextPaths,
-      });
+        this.setState({
+          ...this.state,
+          paths: nextPaths,
+        });
 
-      if (nextPaths.length === 0) {
-        await fetchNodes();
-      } else {
-        await fetchNodes(nextPaths[nextPaths.length - 1].id);
+        if (nextPaths.length === 0) {
+          await fetchNodes();
+        } else {
+          await fetchNodes(nextPaths[nextPaths.length - 1].id);
+        }
       }
     },
   });
