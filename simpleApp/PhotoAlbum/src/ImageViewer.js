@@ -1,12 +1,10 @@
-export default function ImageViewer({ target, onClose }) {
+export default function ImageViewer({ target, initialState, onClose }) {
   const $imageViewer = document.createElement('div');
   $imageViewer.className = 'ImageViewer Modal';
 
   target.appendChild($imageViewer);
 
-  this.state = {
-    selectedImageUrl: null,
-  };
+  this.state = initialState;
 
   this.setState = (nextState) => {
     this.state = nextState;

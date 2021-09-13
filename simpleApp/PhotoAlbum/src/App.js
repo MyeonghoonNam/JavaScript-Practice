@@ -1,7 +1,7 @@
 import Nodes from './Nodes.js';
 import Loading from './Loading.js';
 import ImageViewer from './ImageViewer.js';
-import Beadcrumb from './Breadcrumb.js';
+import Breadcrumb from './Breadcrumb.js';
 import { request } from './api.js';
 
 export default function App({ target }) {
@@ -32,7 +32,7 @@ export default function App({ target }) {
 
   const loading = new Loading({ target });
 
-  const breadcrumb = new Beadcrumb({
+  const breadcrumb = new Breadcrumb({
     target,
     initialState: this.state.paths,
     onClick: async (id) => {
@@ -96,6 +96,9 @@ export default function App({ target }) {
 
   const imageViewer = new ImageViewer({
     target,
+    initialState: {
+      selectedImageUrl: this.state.selectedImageUrl
+    },
     onClose: () => {
       this.setState({
         ...this.state,

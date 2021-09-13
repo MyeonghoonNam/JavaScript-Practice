@@ -1,4 +1,4 @@
-export default function Beadcrumb({ target, initialState, onClick }) {
+export default function Breadcrumb({ target, initialState, onClick }) {
   const $breadcrumb = document.createElement('nav');
   $breadcrumb.className = 'Breadcrumb';
 
