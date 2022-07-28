@@ -9,7 +9,14 @@ const getTodos = () => {
   return http.get(BASE_URL);
 };
 
-const createTodo = () => {};
+const createTodo = (text) => {
+  const todo = {
+    text,
+    completed: false,
+  };
+
+  return http.post(BASE_URL, HEADERS, todo);
+};
 
 const updateTodo = () => {};
 

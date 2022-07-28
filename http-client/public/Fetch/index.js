@@ -1,4 +1,4 @@
-import { getTodos } from "./fetchTodos.js";
+import { getTodos, createTodo } from "./fetchTodos.js";
 
 const TODO_TEXT = "Simple Todo";
 
@@ -15,7 +15,10 @@ const onListClick = async () => {
   printResult("List Todos", result);
 };
 
-const onAddClick = async () => {};
+const onAddClick = async () => {
+  const result = await createTodo(TODO_TEXT);
+  printResult("Create Todo", result);
+};
 
 const onUpdateClick = async () => {};
 

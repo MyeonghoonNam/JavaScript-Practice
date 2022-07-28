@@ -37,7 +37,17 @@ const get = async (url, headers) => {
   return response.data;
 };
 
-const post = async () => {};
+const post = async (url, headers, body) => {
+  const response = await request({
+    url,
+    headers,
+    body,
+    method: "POST",
+  });
+
+  return response.data;
+};
+
 const put = async () => {};
 const patch = async () => {};
 const deleteRequest = async () => {};
