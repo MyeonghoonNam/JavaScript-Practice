@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import findIndex from "lodash.findindex";
 
 const PORT = 8080;
-const TODOS = [];
+let TODOS = [];
 
 const app = express();
 

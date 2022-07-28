@@ -59,7 +59,15 @@ const patch = async (url, headers, body) => {
   return response.data;
 };
 
-const deleteRequest = async () => {};
+const deleteRequest = async (url, headers) => {
+  const response = await request({
+    url,
+    headers,
+    method: "DELETE",
+  });
+
+  return response.data;
+};
 
 export default {
   get,

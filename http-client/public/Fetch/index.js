@@ -1,4 +1,4 @@
-import { getTodos, createTodo, updateTodo } from "./fetchTodos.js";
+import { getTodos, createTodo, updateTodo, deleteTodo } from "./fetchTodos.js";
 
 const TODO_TEXT = "Simple Todo";
 
@@ -29,10 +29,16 @@ const onUpdateClick = async () => {
   };
 
   const result = await updateTodo(newTodo);
-  printResult("Update Todo", result);
+  printResult("Update First Todo", result);
 };
 
-const onDeleteClick = async () => {};
+const onDeleteClick = async () => {
+  const todos = await getTodos();
+  const { id } = todos[0];
+
+  await deleteTodo(id);
+  printResult("Delete First Todo");
+};
 
 document
   .querySelector("button[data-list]")

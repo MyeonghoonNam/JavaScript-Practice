@@ -20,9 +20,14 @@ const createTodo = (text) => {
 
 const updateTodo = (todo) => {
   const url = `${BASE_URL}/${todo.id}`;
+
   return http.patch(url, HEADERS, todo);
 };
 
-const deleteTodo = () => {};
+const deleteTodo = (id) => {
+  const url = `${BASE_URL}/${id}`;
+
+  return http.delete(url, HEADERS);
+};
 
 export { getTodos, createTodo, updateTodo, deleteTodo };
