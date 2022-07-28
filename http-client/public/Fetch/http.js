@@ -48,14 +48,22 @@ const post = async (url, headers, body) => {
   return response.data;
 };
 
-const put = async () => {};
-const patch = async () => {};
+const patch = async (url, headers, body) => {
+  const response = await request({
+    url,
+    headers,
+    body,
+    method: "PATCH",
+  });
+
+  return response.data;
+};
+
 const deleteRequest = async () => {};
 
 export default {
   get,
   post,
-  put,
   patch,
   delete: deleteRequest,
 };

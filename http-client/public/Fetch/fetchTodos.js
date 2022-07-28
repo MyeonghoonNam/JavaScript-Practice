@@ -18,7 +18,10 @@ const createTodo = (text) => {
   return http.post(BASE_URL, HEADERS, todo);
 };
 
-const updateTodo = () => {};
+const updateTodo = (todo) => {
+  const url = `${BASE_URL}/${todo.id}`;
+  return http.patch(url, HEADERS, todo);
+};
 
 const deleteTodo = () => {};
 
