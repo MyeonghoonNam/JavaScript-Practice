@@ -1,8 +1,8 @@
-import { NotFound } from "./pages.js";
+import { NotFoundPage } from "../page/index.js";
 
 class Router {
   constructor(routes) {
-    this.root = "#root";
+    this.rootElementId = "";
     this.routes = routes;
   }
 
@@ -26,7 +26,7 @@ class Router {
       const component = new this.routes[hash]();
       page = component.render();
     } else {
-      const component = new NotFound();
+      const component = new NotFoundPage();
       page = component.render();
     }
 
@@ -34,7 +34,7 @@ class Router {
   }
 
   render(page) {
-    const rootElement = document.querySelector(this.root);
+    const rootElement = document.querySelector("#root");
     rootElement.innerHTML = page;
   }
 }
