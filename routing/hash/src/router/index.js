@@ -2,7 +2,6 @@ import { NotFoundPage } from "../page/index.js";
 
 class Router {
   constructor(routes) {
-    this.rootElementId = "";
     this.routes = routes;
   }
 
@@ -35,7 +34,9 @@ class Router {
 
   render(page) {
     const rootElement = document.querySelector("#root");
-    rootElement.innerHTML = page;
+
+    rootElement.innerHTML = "";
+    rootElement.appendChild(page);
   }
 }
 

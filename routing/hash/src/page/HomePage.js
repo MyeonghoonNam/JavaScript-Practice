@@ -1,12 +1,14 @@
+import { Header } from "../components/index.js";
 class HomePage {
-  constructor() {}
-
   render() {
-    const template = `
-      <p>This is Home Page</p>
-    `;
+    const page = document.createElement("main");
+    const header = new Header().render();
+    const p = document.createElement("p");
+    p.innerText = "This is Home Page";
 
-    return template;
+    page.appendChild(header);
+    page.appendChild(p);
+    return page;
   }
 }
 

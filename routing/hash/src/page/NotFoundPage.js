@@ -1,12 +1,11 @@
 class NotFoundPage {
-  constructor() {}
-
   render() {
-    const template = `
-      <p>This is NotFound Page</p>
-    `;
+    const page = document.createElement("main");
+    const p = document.createElement("p");
+    p.innerText = "This is NotFound Page";
 
-    return template;
+    page.appendChild(p);
+    return page;
   }
 }
 
