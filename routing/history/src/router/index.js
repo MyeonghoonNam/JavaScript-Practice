@@ -14,11 +14,11 @@ export default class Router {
     this.routing(window.location.pathname);
 
     window.addEventListener("click", (e) => {
-      const link = e.target.closest("a");
+      const link = e.target.closest("li");
 
       if (link) {
         e.preventDefault();
-        this.routePush(link.href);
+        this.routePush(link.dataset.url);
       }
     });
 
