@@ -1,5 +1,11 @@
 import Router from "./router/index.js";
-import { HomePage, UserPage, UserDetailPage } from "./pages/index.js";
+import {
+  HomePage,
+  UserPage,
+  UserDetailPage,
+  ProductPage,
+  ProductDetailPage,
+} from "./pages/index.js";
 
 export default class App {
   constructor(props) {
@@ -12,8 +18,8 @@ export default class App {
       "/": HomePage,
       "/user": UserPage,
       "/user/:id": UserDetailPage,
-      "/product": "productList",
-      "/product/:id": "productDetail",
+      "/product": ProductPage,
+      "/product/:id": ProductDetailPage,
     };
 
     const router = new Router(registry);

@@ -2,9 +2,11 @@ export default class UserList {
   render() {
     const $el = document.createElement("div");
     $el.innerHTML = `
-      <a href="/user/1">Hoon</a>
-      <a href="/user/2">Jung</a>
-      <a href="/user/3">Su</a>
+      <ul>
+        <li data-url='/user/1'>Hoon</li>
+        <li data-url='/user/2'>Jung</li>
+        <li data-url='/user/3'>Su</li>
+      </ul>
     `;
 
     return $el;

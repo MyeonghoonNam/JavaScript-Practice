@@ -2,8 +2,10 @@ export default class HomePage {
   render() {
     const $el = document.createElement("main");
     $el.innerHTML = `
-      <a href="/user">User Page</a>
-      <a href="/product">Product Page</a>
+      <ul>
+        <li data-url="/user">User Page</li>
+        <li data-url="/product">Product Page</li>
+      </ul>
     `;
 
     return $el;
