@@ -16,7 +16,7 @@ const reducer = (state = INITIAL_STATE, action) => {
     case TODO_INSERT:
       return {
         ...state,
-        todos: state.todos.concat({ payload }),
+        todos: state.todos.concat({ ...payload }),
       };
   }
 };
