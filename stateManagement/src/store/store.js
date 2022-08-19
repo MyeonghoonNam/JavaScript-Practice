@@ -1,4 +1,5 @@
 import { reducer } from "./reducer.js";
+import cloneDeepObject from "../utils/cloneDeepObject.js";
 
 const createStore = (reducer) => {
   const listeners = [];
@@ -29,10 +30,6 @@ const createStore = (reducer) => {
     dispatch,
     getState,
   };
-};
-
-const cloneDeepObject = (obj) => {
-  return JSON.parse(JSON.stringify(obj));
 };
 
 const freeze = (state) => Object.freeze(cloneDeepObject(state));
