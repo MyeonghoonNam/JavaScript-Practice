@@ -15,8 +15,23 @@
     />
     <title>State Management</title>
     <script src="index.js" type="module"></script>
+    <style>
+      .router-btn {
+        width: 50px;
+        padding: 5px 0;
+        border: solid 1px black;
+        border-radius: 2px;
+        cursor: pointer;
+      }
+
+      .router-btn:hover {
+        background-color: beige;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
+    <button type="button" class="router-btn" href="/">Main</button>
+    <button type="button" class="router-btn" href="/sub">Sub</button>
   </body>
 </html>

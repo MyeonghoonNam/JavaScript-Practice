@@ -1,41 +1,32 @@
-import getClosestElement from "../utils/getClosestElement.js";
-
 const Router = (routes) => {
   const ROUTES = { ...routes };
+  let $root;
 
-  const init = (rootElementId) => {
-    if (!rootElementId) {
-      console.error("잘못된 루트 Id");
-      return;
-    }
-
-    routing(window.location.pathname);
-
+  const init = () => {
     window.addEventListener("click", (e) => {
-      const $button = getClosestElement(e.target, "button");
-
-      if ($button) {
-        routePush($button.href);
+      if (e.target.tagName === "BUTTON") {
+        routePush(e.target.getAttribute("href"));
       }
     });
 
     window.onpopstate = () => {
-      routing(window.location.pathname);
+      routing();
     };
   };
 
   const routePush = (pathname) => {
-    window.history.pushState({}, null, pathname);
-    routing(window.location.pathname);
+    // window.location.pathname = pathname;
+    // window.history.pushState({}, null, pathname);
+    // routing();
   };
 
-  const routing = (pathname) => {
+  const routing = () => {
+    const pathname = window.location.pathname;
     const [_, routeName, param] = pathname.split("/");
-    let page = "";
+    let page;
 
     if (ROUTES[pathname]) {
-      const component = ROUTES[pathname]();
-      page = component();
+      page = ROUTES[pathname]($root);
     } else if (param) {
       // const compoentn = ROUTES[`/${routeName}`]
     }
@@ -45,21 +36,15 @@ const Router = (routes) => {
     // if (page) {
     //   render(page);
     // }
-  };
-
-  const render = (rootElementId) => {
-    const $target = document.querySelector(rootElementId);
-    const $element = routing(window.location.pathname);
-
-    $target.appendChild($element);
-
-    return $target;
+    return page;
   };
 
   init();
 
   return (target) => {
-    const $element = render(target);
+    $root = target;
+    const $element = routing();
+
     return $element;
   };
 };
