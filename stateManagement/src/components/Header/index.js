@@ -12,12 +12,12 @@ const Header = () => {
     });
   };
 
-  const render = () => {
+  const render = (title) => {
     const $element = document.createElement("header");
     $element.setAttribute("class", "header");
 
     $element.innerHTML = `
-      <h1>todos</h1>
+      <h1>${title}</h1>
       <input
         class="new-todo"
         placeholder="What needs to be done?"
@@ -28,8 +28,8 @@ const Header = () => {
     return $element;
   };
 
-  return () => {
-    const $element = render();
+  return (title) => {
+    const $element = render(title);
     bindEvents($element);
 
     $element.querySelector(".new-todo").focus();
