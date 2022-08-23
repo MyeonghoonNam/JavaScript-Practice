@@ -23,16 +23,18 @@ export default class Router {
     });
 
     window.onpopstate = () => {
+      console.log(window.location.pathname);
       this.routing(window.location.pathname);
     };
   }
 
   routePush(pathname) {
     window.history.pushState({}, null, pathname);
-    this.routing(window.location.pathname);
+    this.routing(pathname);
   }
 
   routing(pathname) {
+    console.log(pathname);
     const [_, route, param] = pathname.split("/");
     let page = null;
 
