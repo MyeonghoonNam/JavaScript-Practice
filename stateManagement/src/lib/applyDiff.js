@@ -2,7 +2,7 @@ const isNodeChanged = (node1, node2) => {
   const n1Attributes = node1.attributes;
   const n2Attributes = node2.attributes;
 
-  if (n1Attributes.length !== n2Attributes) {
+  if (n1Attributes.length !== n2Attributes.length) {
     return true;
   }
 
