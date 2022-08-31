@@ -1,45 +1,33 @@
-const Router = (routes) => {
-  const ROUTES = { ...routes };
-  let $root;
+const Router = () => {
+  const ROUTES = {};
 
-  const init = () => {
-    window.addEventListener("click", (e) => {
-      if (e.target.tagName === "BUTTON") {
-        routePush(e.target.getAttribute("href"));
-      }
+  const init = (routes) => {
+    Object.assign(ROUTES, routes);
+
+    window.addEventListener("popstate", () => {
+      routeChange(window.location.pathname);
     });
-
-    window.onpopstate = () => {
-      routing(window.location.pathname, "Routing");
-    };
   };
 
-  const routePush = (pathname) => {
+  const routeChange = (pathname) => {
     window.history.pushState({}, null, pathname);
-    routing(pathname, "Routing");
+    const page = routing(pathname);
+
+    render(page);
   };
 
-  const routing = (pathname, mode = "StateChange") => {
+  const routing = (pathname) => {
     const [_, routeName, param] = pathname.split("/");
     let page;
 
     if (ROUTES[pathname]) {
-      page = ROUTES[pathname]($root);
+      page = ROUTES[pathname]();
     } else if (param) {
       // 미구현
       // 페이지별 상태 갱신 위한 스토어 수정 필요
     }
 
-    if (page) {
-      if (mode === "Routing") {
-        render(page);
-      } else if (mode === "StateChange") {
-        return page;
-      }
-    } else {
-      // not found page
-      // 미구현
-    }
+    return page;
   };
 
   const render = (page) => {
@@ -49,16 +37,7 @@ const Router = (routes) => {
     $target.appendChild(page);
   };
 
-  init();
-
-  return (target) => {
-    $root = target;
-
-    const pathname = window.location.pathname;
-    const $element = routing(pathname);
-
-    return $element;
-  };
+  return { init, routing, routeChange };
 };
 
-export default Router;
+export const router = Router();

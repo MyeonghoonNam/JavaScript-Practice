@@ -1,4 +1,19 @@
+import { router } from "../../lib/router.js";
+
 const Navigation = () => {
+  const handleClickNavigation = (e) => {
+    const $element = e.target;
+
+    if ($element.className === "router-btn") {
+      const url = e.target.getAttribute("href");
+      router.routeChange(url);
+    }
+  };
+
+  const bindEvents = (target) => {
+    target.addEventListener("click", handleClickNavigation);
+  };
+
   const render = () => {
     const $navigation = document.createElement("nav");
     $navigation.innerHTML = `
@@ -11,6 +26,8 @@ const Navigation = () => {
 
   return () => {
     const $navigation = render();
+    bindEvents($navigation);
+
     return $navigation;
   };
 };

@@ -1,15 +1,22 @@
 import { MainTodosPage, SubTodosPage } from "./pages/index.js";
-import Router from "./lib/router.js";
+import { router } from "./lib/router.js";
 
-const App = () => {
-  const router = Router({
-    "/": MainTodosPage(),
-    "/sub": SubTodosPage(),
+const App = (root) => {
+  router.init({
+    "/": MainTodosPage(root),
+    "/sub": SubTodosPage(root),
   });
 
-  return (root) => {
-    const $element = router(root);
-    return $element;
+  const render = () => {
+    const pathname = window.location.pathname;
+    const $app = router.routing(pathname);
+
+    return $app;
+  };
+
+  return () => {
+    const $app = render();
+    return $app;
   };
 };
 
