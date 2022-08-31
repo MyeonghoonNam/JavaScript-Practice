@@ -8,13 +8,13 @@ const config = {
   focusDom: ".new-todo",
 };
 
-const app = App();
+const app = App(config.rootDom);
 
 const render = () => {
   window.requestAnimationFrame(() => {
     const entry = document.body;
     const realDom = document.querySelector(config.rootDom);
-    const virtualDom = app(realDom);
+    const virtualDom = app();
 
     applyDiff(entry, realDom, virtualDom);
     focusInputForm(config.focusDom);
